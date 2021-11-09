@@ -1,6 +1,7 @@
 import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native'
 import React,{useState} from 'react'
 import DropDownPicker from 'react-native-dropdown-picker';
+import { CommonActions, useNavigation } from '@react-navigation/native' 
 
 const Form = () => {
 
@@ -60,10 +61,14 @@ const LeftForm=()=>{
     )
 }
 const Buttons=()=>{
+    const navigation = useNavigation() 
+
     return(
         <View style={{flexDirection:'row'}}>
               <TouchableOpacity
-            style={styles.btn,styles.btn_register}>
+            style={styles.btn,styles.btn_register} 
+            onPress={() => navigation.navigate('Register')}
+            >
 <Text>Get Started</Text>
             </TouchableOpacity>
 

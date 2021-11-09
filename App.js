@@ -1,10 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Login from './screens/Login/Login'
-export default function App() {
+import Register from './screens/Register/Register';
+import GlobalStyles from './screens/styles/globalStyles';
+
+const {Navigator,Screen} = createNativeStackNavigator();
+function App() {
   return (
-    <Login/>
+    <NavigationContainer>
+      <SafeAreaView style={GlobalStyles.droidSafeArea}>
+      <Navigator screenOptions={{headerShown: false}} initialRouteName="Register">
+        <Screen name="Login" component={Login} ></Screen>
+        <Screen name="Register" component={Register} ></Screen>
+
+      </Navigator>
+    </SafeAreaView>
+    </NavigationContainer>
   );
 }
 
+export default App
