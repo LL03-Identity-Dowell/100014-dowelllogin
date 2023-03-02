@@ -1,0 +1,58 @@
+{% extends 'header.html' %}
+{% load i18n %}
+{% load  static %}
+{% block title %}
+{{title}}
+{% endblock title %}
+{% block content %}
+
+<div class="container">
+
+<div class="row justify-content-center">
+    {% get_current_language as CURRENT_L %}
+    {% get_language_info for CURRENT_L as lang1 %}
+<center><div class="col-md-6">
+    <div class="row" style="color:yellow;margin-top:10% !important">
+
+        <center>
+            <div class="col-md-6">
+                <img width="100%" height="80%" src="{% static 'img/cap.png' %}">
+                <span style="color: yellow;font-weight:bold">Face ID not Recognised</span><br><br>
+        <button id="mybtn" class="btn btn-success">Try Again</button></div></center>
+ <form action="facecheck" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                    <input type="file" id="profile_image" name="profile_image" accept="image/*;capture=camera" style="display: none;" onchange="this.form.submit()" required />
+                    </form><br><br><br>
+<script>
+$("#mybtn").click(function() {
+    $("input[id='profile_image']").click();
+});
+</script>
+                <form>
+                    <div class="form-group col-md-8">
+            <label for="link" class="" style="float:left">
+                {% trans 'Select your language' %} <span class="asterisk"> </span>
+            </label><br><center>
+                    <select name="language" id="select_location" class="form-control w-100">
+                        {% get_available_languages as L %}
+                        {% get_language_info_list for L as ls %}
+                        {% for lang in ls %}
+                        <option value="{{ lang.code}}" {% if lang.code == CURRENT_L %} selected {% endif %}>
+                            {{lang.name_local}} ({{ lang.code}})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                </form>
+                    </center></div>
+            </div>
+            </div></center>
+</div>
+<script>
+$('#select_location').on('change', function(){
+   window.location = $(this).val()+'/direct';
+});
+
+</script>
+{% endblock content %}

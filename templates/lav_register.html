@@ -1,0 +1,201 @@
+{% extends 'lav_base.html' %}
+{% load  static %}
+{% block title %}
+{% load crispy_forms_tags %}
+Dowell App
+{% endblock title %}
+{% block content %}
+<script>
+    function previewFile(input){
+        var file = $("input[type=file]").get(0).files[0];
+
+        if(file){
+            var reader = new FileReader();
+
+            reader.onload = function(){
+                $("#previewImg").attr("src", reader.result);
+            }
+
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+<style>
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;
+  background: white;
+  cursor: inherit;
+  display: block;
+}
+</style>
+<link href="{%static 'css/test.css' %}" rel="stylesheet">
+<div class="container11 bg-light">
+<div style="width:100%; float:left">
+    <div style="float:left;width:70%; margin-top:20px;text-align:center;color:yellow;"><h2 style="margin-left:40%">Join Us </h2></div>
+    <div class="imgp1"><img style="width:100%;height: 100%; float:right;" src="{% static 'img/lav.png' %}"/></div></div>
+
+
+
+
+<br>
+
+  <form style="color:yellow;margin-left:15%" action="" method="POST" enctype="multipart/form-data">
+     {% csrf_token %}
+     <div style="color:yellow; width:150px; height:150px;margin-left:30%"><img width="100%" height="100%" id="previewImg" src="media/user.png" class="rounded-circle" alt="Placeholder"></div><br><br><br>
+<span class="btn btn-light btn-file" style="margin-left:32%">
+  Profile Photo...<input type="file" name="profile_image" accept="image/*" onchange="previewFile(this);">
+</span>
+
+     <!--{{ form.profile_image|as_crispy_field }}-->
+     </center>
+        <div class="input-group">
+      <div class="form-group col-md-5 mb-0">
+        {{ form.role|as_crispy_field }}<i class="fa fa-select"></i>
+      </div>&nbsp;
+      <div class="form-group col-md-5 mb-0">
+        {{ form.teamcode|as_crispy_field }}
+        <span style="float:right;font-size:11px">Optional</span>
+      </div>
+    </div>
+    <div class="input-group">
+      <div class="form-group col-md-5 mb-0">
+       {{ form.first_name|as_crispy_field }}
+      </div>&nbsp;
+      <div class="form-group col-md-5 mb-0">
+        {{ form.last_name|as_crispy_field }}
+        <span style="float:right;font-size:11px">Optional</span>
+      </div>
+    </div>
+  <div class="input-group">
+      <div class="form-group col-md-5 mb-0">
+        {{ form.username|as_crispy_field }}<i class="fa fa-select"></i>
+      </div>&nbsp;
+      <div class="form-group col-md-5 mb-0">
+        {{ form.email|as_crispy_field }}
+      </div>
+    </div>
+    <div class="input-group">
+      <div class="form-group col-md-5 mb-0">
+       {{ form.password1|as_crispy_field }}
+      </div>&nbsp;
+      <div class="form-group col-md-5 mb-0">
+        {{ form.password2|as_crispy_field }}
+      </div>
+    </div>
+      <div class="input-group">
+      <div class="form-group col-md-2 mb-0">
+        {{ form.phonecode|as_crispy_field }}
+      </div>&nbsp;
+      <div class="form-group col-md-8 mb-0">
+        {{ form.phone|as_crispy_field }}
+      </div>
+    </div>
+          <script>
+            $('#id_password1, #id_password2').on('keyup', function () {
+                if ($('#id_password1').val() == $('#id_password2').val()) {
+                    $('#mess').html('Matching').css('color', 'green');
+                } else
+                    $('#mess').html('Not Matching').css('color', 'red');
+            });</script>
+            <script>
+            function ShowFunction() {
+              var x = document.getElementById("id_password1");
+              var y = document.getElementById("id_password2");
+              if (x.type === "password") {
+                x.type = "text";
+                y.type="text";
+              } else {
+                x.type = "password";
+                y.type="password";
+              }
+            }
+            var myInput = document.getElementById("pass");
+            var letter = document.getElementById("letter");
+            var capital = document.getElementById("capital");
+            var number = document.getElementById("number");
+            var special = document.getElementById("special");
+            var length = document.getElementById("length");
+
+            // When the user clicks on the password field, show the message box
+            myInput.onfocus = function() {
+              document.getElementById("message").style.display = "block";
+            }
+
+            // When the user clicks outside of the password field, hide the message box
+            myInput.onblur = function() {
+              document.getElementById("message").style.display = "none";
+            }
+
+            // When the user starts to type something inside the password field
+            myInput.onkeyup = function() {
+              // Validate lowercase letters
+              var lowerCaseLetters = /[a-z]/g;
+              if(myInput.value.match(lowerCaseLetters)) {
+                letter.classList.remove("invalid");
+                letter.classList.add("valid");
+              } else {
+                letter.classList.remove("valid");
+                letter.classList.add("invalid");
+              }
+
+              // Validate capital letters
+              var upperCaseLetters = /[A-Z]/g;
+              if(myInput.value.match(upperCaseLetters)) {
+                capital.classList.remove("invalid");
+                capital.classList.add("valid");
+              } else {
+                capital.classList.remove("valid");
+                capital.classList.add("invalid");
+              }
+
+              // Validate numbers
+              var numbers = /[0-9]/g;
+              if(myInput.value.match(numbers)) {
+                number.classList.remove("invalid");
+                number.classList.add("valid");
+              } else {
+                number.classList.remove("valid");
+                number.classList.add("invalid");
+              }
+            // Validate special charecter
+              var specials = /[#$@!%^&*_]/g;
+              if(myInput.value.match(specials)) {
+                special.classList.remove("invalid");
+                special.classList.add("valid");
+              } else {
+                special.classList.remove("valid");
+                special.classList.add("invalid");
+              }
+              // Validate length
+              if(myInput.value.length >= 8) {
+                length.classList.remove("invalid");
+                length.classList.add("valid");
+              } else {
+                length.classList.remove("valid");
+                length.classList.add("invalid");
+              }
+            }
+                            </script>
+                            <br>
+
+         <input style="margin-left:12%" type="reset" value="Reset">
+     	<input type="submit" value="Join"><br>
+    <center> <span>	<font color="white">Already have an Account? </font><a href="/" style="color:yellow;"><b> Sign In</b></a></span></center>
+      <div style="color:red;font-weight: bold;">{{context.signup}}</div>
+      <div style="color:red;font-weight: bold;">{{context.error}}</div>
+</form></center>
+</div>
+{% endblock content %}

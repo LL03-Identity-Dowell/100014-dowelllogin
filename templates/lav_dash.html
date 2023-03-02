@@ -1,0 +1,69 @@
+{% extends 'lav_base.html' %}
+{% load  static %}
+{% block title %}
+Dowell App
+{% endblock title %}
+
+{% block content %}
+<script>
+    function hideLoader() {
+    $('#loading').hide();
+}
+
+$(window).ready(hideLoader);
+
+// Strongly recommended: Hide loader after 20 seconds, even if the page hasn't finished loading
+setTimeout(hideLoader, 20 * 1000);
+</script>
+<style>
+    #loading {
+    background: url('{%static "img/hourglass.gif" %}') no-repeat center center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 9999999;
+}
+</style>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a href="#" class="navbar-brand">Menu</a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav">
+                <a href="/" class="nav-item nav-link active">Home</a>
+                <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" class="nav-item nav-link">Social Media Automation</a>
+                <a href="https://100039.pythonanywhere.com/user/?session_id={{request.session.session_key}}" class="nav-item nav-link">Client Report</a>
+                <a href="https://100043.pythonanywhere.com/exhibitors/?session_id={{request.session.session_key}}" class="nav-item nav-link">exhibitior</a>
+              	<a href="https://100068.pythonanywhere.com/?session_id={{request.session.session_key}}" class="nav-item nav-link">licenses</a>
+              	<a href="https://100069.pythonanywhere.com/?session_id={{request.session.session_key}}" class="nav-item nav-link">Chat</a>
+                <a href="#" class="nav-item nav-link">Voice of Customer</a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a href="#" class="nav-item nav-link">{{request.user.username}}{{api}}</a>
+                <a href="logout" class="nav-item nav-link">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="container">
+       <div id="loading"></div>
+    <div class="row mt-4">
+        <div class="col-md-3" style="height: 300px;">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img width="100%" height="100%" src="{% static 'img/social_media.png' %}"></a>
+        </div>
+        <div class="col-md-3" style="height: 300px;">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img width="100%" height="100%" src="{% static 'img/voiceofimage.jpg' %}"></a>
+        </div>
+        <div class="col-md-3">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img src=""></a>
+        </div>
+        <div class="col-md-3">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img src=""></a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

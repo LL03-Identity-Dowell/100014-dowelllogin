@@ -1,0 +1,219 @@
+
+{% load i18n %}
+{% load  static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>NPS Scale</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<script src="{%static 'voc/js/emoji.js' %}" ></script>
+  <link rel="stylesheet" href="{%static 'voc/css/scale.css' %}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <div class="row" style="margin-top: 3%;">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 bg-danger">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <h2 align="center"><u>Customize your scale</u></h2>
+                        <div class="form-group">
+                            <label for="head">Name of Scale</label>
+                            <input type="text" name="nameofscale" class="form-control" id="head" placeholder="Name of scale" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="orientation">Orientation</label>
+                            <select id="orientation" class="form-control" name="orientation" required>
+                              <option selected>Choose...</option>
+                              <option value="horizontal">Horizontal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="numberof">Number of rating</label>
+                            <input type="number" name="numberof" class="form-control" id="numberof" placeholder="Number of Scale" required>
+                        </div>
+                        <script>
+                    //         $('#orientation').change(function(){
+                    //       alert($(this).val());
+
+                    //   })
+
+                    </script>
+                        <div class="form-group">
+                            <label for="scolor">Scale Color</label>
+                            <input type="color" name="scolor" class="form-control" id="scolor" placeholder="Background Color" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="rcolor">Round Color</label>
+                            <input type="color" name="rcolor" class="form-control" id="rcolor" placeholder="Font Color" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fcolor">Font Color</label>
+                            <input type="color" name="fcolor" class="form-control" id="fcolor" placeholder="Scale Color" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="format">Format</label>
+                            <select id="format" class="form-control" name="format" required>
+                              <option selected>Choose...</option>
+                              <option value="numbers">Numbers</option>
+                              <option value="emoji">Emojis</option>
+                              <option value="stars">Stars</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="lefttext">Left</label>
+                            <input type="text" name="left" class="form-control" id="lefttext" placeholder="Left Text" required>
+                        </div>
+                      <div class="form-group">
+                            <label for="centertext">Center</label>
+                            <input type="text" name="center" class="form-control" id="centertext" placeholder="Center Text" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="righttext">Right</label>
+                            <input type="text" name="right" class="form-control" id="righttext" placeholder="Right Text" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">Time</label>
+                            <input type="text" name="time" class="form-control" id="time" placeholder="Time" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a onclick="preview();" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Preview</a>
+                  </form>
+            </div>
+            <div class="col-md-3" id="ghost">
+                 <!--<img src="https://100014.pythonanywhere.com/media/brandlogos/thumbnails/{{logo}}" width="90%" height="100%" style="height:150px" alt="your logo"><hr>-->
+                 <!--               	<div style="font-size:20px">Considering your experience with <b>{{brand}}</b>, how likely would you be to recommend <b>{{product}}</b> to your friend or colleague<br></div><hr>-->
+                 <!--                   <div class="horizontal d-flex justify-content-center" id="red"></div>-->
+                 <!--                   <center><div class="d-flex justify-content-center" id="horizontal"></div></center>-->
+                 <!--                   <hr>-->
+                 <!--                   <br>-->
+            </div>
+                <!-- Button trigger modal -->
+
+                    <!-- Modal -->
+
+                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h2 class="modal-title" id="exampleModalLongTitle" align="center"></h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                                	<div style="font-size:26px" class="text-danger">Considering your experience with <b>&lt;Brand></b>, how likely would you be to recommend <b>&lt;Product></b> to your friend or colleague<br></div><hr>
+                                    <div class="horizontal d-flex justify-content-center" id="red"></div>
+                                    <center><div class="d-flex justify-content-center" id="horizontal"></div></center>
+                                    <br>
+                                    <div class="pl-3" style="font-size:2em">
+                                       <div style="float: left" id="left"></div>
+                                        <div style="float: right" id="right"></div>
+                                        <div style="margin: 0 auto; width: 30%;" id="center"></div>
+                                    </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+            <script>
+                var vert="vertical";
+                var hori="horizontal";
+                var name="number";
+                var n=0;
+               function preview(){
+
+                document.getElementById("exampleModalLongTitle").innerHTML=$("#head").val();
+                document.getElementById("left").innerHTML=$("#lefttext").val();
+                document.getElementById("right").innerHTML=$("#righttext").val();
+                document.getElementById("center").innerHTML=$("#centertext").val();
+                // document.getElementById("ghost").style.display="block";
+                $("#red").attr('class', $("#orientation").val());
+                $('#horizontal').attr("id", $("#orientation").val());
+                em=$("#orientation").val();
+                $('#'+em).empty();
+                n = $("#numberof").val();
+                //alert('#'+rt+" "+$("#bgcolor").val());
+                $('#red').css({"backgroundColor": $("#scolor").val()});
+                var name = $('#format').val();
+                ram(name,n);
+
+               }
+                //             for (let i = 1; i <= n; i++) {
+                //     const para = document.createElement("p");
+                //     para.innerHTML = i;
+                //     para.id="demo"+i
+                //     document.getElementById("horizontal").appendChild(para);
+                //    document.getElementById("demo"+i).innerHTML = i;
+                //    document.getElementById("demo"+i).style.backgroundColor = $("#fcolor").val();
+                //    document.getElementById("demo"+i).style.color = $("#scolor").val();
+                // }
+                function ram(star,num){
+                    for (let i = 1; i <= num; i++) {
+                    const para = document.createElement("span");
+
+             		// if (star==="stars"){
+             		// 	para.innerHTML="Naga";
+             		// }else{
+             		// 	para.innerHTML = i;
+             		// }
+
+                    para.id=i
+                    document.getElementById($("#orientation").val()).appendChild(para);
+                    if (star==="stars"){
+             			document.getElementById(i).innerHTML = '<i class="fa fa-star"></i>';
+             			document.getElementById(i).style.backgroundColor = $("#rcolor").val();
+             		}
+             		else if(star==="emoji"){
+             			document.getElementById(i).innerHTML = '<i class="far fa-grin"></i>';
+             			document.getElementById(i).style.backgroundColor = $("#scolor").val();
+
+             		}
+             		else{
+             			document.getElementById(i).innerHTML = i;
+             			document.getElementById(i).style.backgroundColor = $("#rcolor").val();
+             		}
+
+
+                   document.getElementById(i).style.color = $("#fcolor").val();
+                }
+                }
+
+
+                // looping from i = 1 to 5
+
+                // for (let i = 1; i <= n; i++) {
+                // 	const para = document.createElement("span");
+                //     const para1 = document.createElement("p");
+                //     para1.innerHTML=i;
+                // para.innerHTML = i;
+                // para.id="demo"+i
+                // // Append to another element:
+                // document.getElementById("vertical").appendChild(para);
+                // document.getElementById("red").appendChild(para1);
+                //    document.getElementById("demo"+i).innerHTML = i;
+                //    document.getElementById("demo"+i).style.background = "rgb(242, 208, 181)"
+
+                // }
+
+
+                </script>
+
+        </div>
+    </div>
+
+</body>
+</html>

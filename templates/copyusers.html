@@ -1,0 +1,15 @@
+{% extends 'header.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load  static %}
+{% block title %}
+
+Dowell App
+{% endblock title %}
+{% block content %}
+<h1 style="color:white">{{ct}}</h1><br/><br/>
+<h1 style="color:white">{{ct1}}</h1><br/><br/>
+{% for i in ids %}
+<h4 style="color:white">{{i}}naga</h4>
+{%endfor%}
+{% endblock content %}

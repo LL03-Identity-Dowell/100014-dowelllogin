@@ -1,0 +1,69 @@
+
+{% load i18n %}
+{% load  static %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{%static 'voc/css/style.css' %}" rel="stylesheet">
+    <title>VOC_NPS</title>
+</head>
+<body>
+    <div class="mroot">
+        <div class='header'>
+          Question
+        </div>
+        <div class='pre'>
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit./n
+          Voluptates quod sunt enim illo quis veniam illum iure nisi maxime,
+          quasi impedit optio amet officiis
+          repellendus ipsa temporibus libero quae exercitationem?
+        </div>
+
+            <div class='bcontainer'>
+                <button class='sbutton'>0</button>
+                <button class='sbutton'>1</button>
+                <button class='sbutton'>2</button>
+                <button class='sbutton'>3</button>
+                <button class='sbutton'>4</button>
+                <button class='sbutton'>5</button>
+                <button class='sbutton'>6</button>
+                <button class='sbutton'>7</button>
+                <button class='sbutton'>8</button>
+                <button class='sbutton'>9</button>
+                <button class='sbutton'>10</button>
+              </div>
+
+              <div class='butonsub'>
+                <div class='ba'>min</div>
+                <div class='bb'>mid</div>
+                <div class='bc'>max</div>
+              </div>
+
+
+        <hr
+          style="
+            color: red;
+            background-color: red;
+            height: 2;
+            width: 100%;"
+
+        />
+
+        <div class='chartheader'>Report</div>
+
+        <div>
+            <img class="chartimage" src="{% static 'img/chart.PNG' %}" alt="chart">
+        </div>
+
+        <div class="butcont">
+          <button class='bta' onclick="location.href = 'preview';">Privew</button>
+          <button class='btb' onclick="location.href = 'emcode';" >Create Embedding code</button>
+        </div>
+
+
+
+      </div>

@@ -1,0 +1,385 @@
+{% extends 'lav_base.html' %}
+{% load  static %}
+{% block title %}
+Dowell App
+{% endblock title %}
+
+{% block content %}
+<script>
+    function hideLoader() {
+    $('#loading').hide();
+}
+
+$(window).ready(hideLoader);
+
+// Strongly recommended: Hide loader after 20 seconds, even if the page hasn't finished loading
+setTimeout(hideLoader, 20 * 1000);
+$('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus')
+})
+</script>
+<style>
+    #loading {
+    background: url('{%static "img/hourglass.gif" %}') no-repeat center center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 9999999;
+}
+</style>
+<style type="text/css">
+        .content1 {
+
+            margin:5% auto;
+            background-color: #e8eae6;
+            display: none;
+            color:yellow;
+            /*to hide popup initially*/
+        }
+
+        .close-btn {
+            float:right;
+            cursor:pointer;
+            right: 5px;
+            top: 0%;
+            /*background-color: red;*/
+            color: white;
+            border-radius: 50%;
+            padding: 4px;
+        }
+    </style>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+
+
+    <style>
+
+        a:hover{text-decoration: none;}
+        header {
+        background: #fff;
+        border-bottom: dashed 2px #0c617d;
+        }
+        .menu-grid {
+        text-align: left;
+        padding: 0px 0;
+        }
+        .menu-grid .btn-group {
+        margin-right: 80px;
+        }
+        .menu-grid .dropdown-toggle,
+        .menu-grid .dropdown-toggle:hover,
+        .menu-grid .dropdown-toggle:focus,
+        .menu-grid .dropdown-toggle:active,
+        .menu-grid .btn-group.open .dropdown-toggle {
+        border: 0;
+        float: right;
+        box-shadow: none;
+        background: transparent;
+        }
+        .menu-grid .btn-default:after {
+        padding-left: 4px;
+        line-height: 20px;
+        display: inline-block;
+        content: "+ Mostlikers";
+        color: #0000 !important;
+        }
+        .menu-grid .btn-default img {
+        height: 18px;
+        vertical-align: bottom;
+        }
+        .menu-grid .dropdown-menu {
+        margin: 0;
+        border: 0;
+        padding: 0;
+        left: auto;
+        right: 35px;
+        margin-top: 10px;
+        box-shadow: none;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+        -o-border-radius: 3px;
+        border-radius: 3px;
+        background-color: #ffffff;
+        -webkit-box-shadow: 0 1px 8px 0 #393939;
+        -moz-box-shadow: 0 1px 8px 0 #393939;
+        -ms-box-shadow: 0 1px 8px 0 #393939;
+        -o-box-shadow: 0 1px 8px 0 #393939;
+        box-shadow: 0 1px 8px 0 #393939;
+        }
+        .menu-grid .list {
+        width: 380px;
+        position: relative;
+        padding: 15px 25px;
+        }
+        .menu-grid .list:after {
+        bottom: 100%;
+        right: 20px;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-color: rgba(136, 183, 213, 0);
+        border-bottom-color: #FFFFFF;
+        border-width: 8px;
+        margin-right: 0px;
+        }
+        .menu-grid .list .menu {
+        padding: 0px 0;
+        color: #333333;
+        text-align: center;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        -ms-border-radius: 2px;
+        -o-border-radius: 2px;
+        border-radius: 2px;
+        text-transform: capitalize;
+        border: 1px solid transparent;
+        -webkit-box-shadow: 0 0 1px 0 transparent;
+        -moz-box-shadow: 0 0 1px 0 transparent;
+        -ms-box-shadow: 0 0 1px 0 transparent;
+        -o-box-shadow: 0 0 1px 0 transparent;
+        box-shadow: 0 0 1px 0 transparent;
+        }
+        .menu-grid .list .menu:hover {
+        border: 1px solid #e8e8e8;
+        -webkit-box-shadow: 0 0 1px 0 #dddddd;
+        -moz-box-shadow: 0 0 1px 0 #dddddd;
+        -ms-box-shadow: 0 0 1px 0 #dddddd;
+        -o-box-shadow: 0 0 1px 0 #dddddd;
+        box-shadow: 0 0 1px 0 #dddddd;
+        }
+        .menu-grid .menu span {
+        width: 55px;
+        /* height: 55px; */
+        display: block;
+        margin: 0 auto 10px;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        -ms-border-radius: 50%;
+        -o-border-radius: 50%;
+        border-radius: 50%;
+        /* background-image: url('v1_376447c3.png'); */
+        }
+
+        @media only screen and (max-device-width: 768px) {
+          .menu-grid .dropdown-menu {
+            margin: 0;
+            border: 0;
+            padding: 0;
+            /* left: auto; */
+            right: -1vw;
+            margin-top: 5px;
+            box-shadow: none;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            -ms-border-radius: 3px;
+            -o-border-radius: 3px;
+            border-radius: 3px;
+            background-color: #ffffff;
+            -webkit-box-shadow: 0 1px 8px 0 #393939;
+            -moz-box-shadow: 0 1px 8px 0 #393939;
+            -ms-box-shadow: 0 1px 8px 0 #393939;
+            -o-box-shadow: 0 1px 8px 0 #393939;
+            box-shadow: 0 1px 8px 0 #393939;
+}
+
+}
+
+.home-nav {
+  padding: 10px;
+}
+.menu {
+    min-height: 113px;
+}
+    </style>
+
+
+    <title>Document</title>
+</head>
+    <body>
+
+          <div class="row home-nav " style="width:100% !important;background-color:#fff">
+            <div class="col-xs-11 col-sm-3 col-md-3 col-ld-3">
+              DoWell
+            </div>
+            <div class="col-xs-1 col-sm-3 col-md-3 col-ld-3 pull-right menu-grid">
+              <div class="navbar-header pull-left">
+              </div>
+              <div class="btn-group">
+                <i class="material-icons">apps</i>
+                <button type="button" class="dropdown-toggle" data-toggle="dropdown"></button>
+                <div class="dropdown-menu" role="menu">
+                  <div class="list">
+                      <div class="col-sm-4 col-xs-6">
+                        <a href="#">
+                          <span class="blog"></span>
+                          <div class="menu"><span><i class="material-icons">language</i></span>Social Media</div>
+                        </a>
+                      </div>
+                      <div class="col-sm-4 col-xs-6">
+                        <a href="#">
+                          <div class="menu"><span><i class="material-icons">groups</i></span>Interviews</div>
+                        </a>
+                      </div>
+                      <div class="col-sm-4 col-xs-6">
+                        <a href="https://100035.pythonanywhere.com/nps-admin/?session_id={{request.session.session_key}}">
+                          <div class="menu"><span><i class="material-icons">content_paste</i></span>nps-scale</div>
+                        </a>
+                      </div>
+                      <div class="col-sm-4 col-xs-6">
+                        <a href="#">
+                          <span class="blog"></span>
+                          <div class="menu"><span><i class="material-icons">email</i></span>Chat</div>
+                        </a>
+                      </div>
+                      <div class="col-sm-4 col-xs-6">
+                        <a href="https://100076.pythonanywhere.com/?session_id={{request.session.session_key}}">
+                          <div class="menu"><span><i class="material-icons">sentiment_satisfied</i></span>voc_nps</div>
+                        </a>
+                      </div>
+                      <div class="col-sm-4 col-xs-6">
+                        <a href="#">
+                          <div class="menu"><span><i class="material-icons">hotel_class</i></span>Reviews</div>
+                        </a>
+                      </div>
+                      <div class="col-sm-4 col-xs-6">
+                        <a href="#">
+                          <div class="menu"><span><i class="material-icons">forum</i></span>Blogs</div>
+                        </a>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <script>
+          $(document).ready(function(){
+            // $('.dropdown-menu').show();
+            $('.menu-grid .btn-group').hover(function(){
+              $('.dropdown-menu', this).stop(true, true).delay(200).fadeIn();
+            }, function(){
+              $('.dropdown-menu', this).stop(true, true).delay(500).fadeOut('fast');
+            });
+
+            $("document").click(function () {
+                $(".dropdown-menu").hide();
+            });
+          });
+      </script>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+
+        <a href="#" class="navbar-brand">Menu</a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav">
+                <a href="/main" class="nav-item nav-link active">Home</a>
+                <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" class="nav-item nav-link">Social Media Automation</a>
+                <a href="https://100039.pythonanywhere.com/user/?session_id={{request.session.session_key}}" class="nav-item nav-link">Client Report</a>
+                <a href="https://100043.pythonanywhere.com/exhibitors/?session_id={{request.session.session_key}}" class="nav-item nav-link">exhibitior</a>
+              	<a href="https://100068.pythonanywhere.com/?session_id={{request.session.session_key}}" class="nav-item nav-link">licenses</a>
+              	<a href="https://100069.pythonanywhere.com/?session_id={{request.session.session_key}}" class="nav-item nav-link">Chat</a>
+              	<a href="https://100035.pythonanywhere.com/nps-admin/?session_id={{request.session.session_key}}" class="nav-item nav-link">Dowell Scale</a>
+              	<a href="https://100025.pythonanywhere.com/?session_id={{request.session.session_key}}" class="nav-item nav-link">NPS_Feedback</a>
+              	<a href="https://100079.pythonanywhere.com/?session_id={{request.session.session_key}}" class="nav-item nav-link">Client Admin</a>
+              	<a href="https://ll07-team-dowell.github.io/DowellJobPortal/#/?session_id={{request.session.session_key}}" class="nav-item nav-link">HR</a>
+                {% if "Admin" in user.role %}
+                <a href="#" class="nav-item nav-link" onclick="togglePopup()">Create Users</a>
+
+                <!-- Button trigger modal -->
+
+    <!-- div containing the popup -->
+
+    <script type="text/javascript">
+
+        // Function to show and hide the popup
+        function togglePopup() {
+            $(".content1").toggle();
+
+    $(".container").fadeOut(200).toggle();
+
+        }
+    </script>
+                {% endif %}
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a href="#" class="nav-item nav-link">{{request.user.username}}{{api}}</a>
+                <a href="logout" class="nav-item nav-link">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<center>
+    <div class="content1 col-md-4 bg-dark">
+        <div class="row">
+            <div class="col-md-12">
+        <div onclick="togglePopup()" class="close-btn">
+            X
+        </div>
+        <h3 class="text-light">Create Users</h3>
+<form action="/createusers" class="form-inline" method="POST">
+    {% csrf_token %}
+
+
+         <div class="form-group col-md-8">
+             <label for="user" class="" style="float:left">Username pattern</label>
+         <input type="text" name="userpattern" id="user" class="form-control col-md-4" placeholder="Username Pattern"></div>
+         <div class="form-group col-md-8">
+             <label for="role" class="" style="float:left">Role</label>
+        <select  name="role" id="role" class="form-control">
+                    <option value="TeamMember">Team Member</option>
+                    <option value="Freelancer" selected>Freelancer</option>
+                  </select></div>
+         <div class="form-group col-md-8">
+             <label for="teamcode" class="" style="float:left">Team Code</label>
+         <input type="text" name="teamcode" id="teamcode" class="form-control col-md-4" placeholder="Team Code" required></div>
+         <div class="form-group col-md-8 mb-3">
+             <label for="qty" class="" style="float:left">Number of Users</label>
+         <input type="number" name="qty" id="qty" class="form-control col-md-4" placeholder="qty" required></div>
+         <input type="submit" class="btn btn-success mb-5" value="Create">
+
+
+
+</form>
+</div>
+    </div>
+    </div>
+</center>
+<div class="container">
+       <div id="loading"></div>
+    <div class="row mt-4">
+        <div class="col-md-3" style="height: 300px;">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img width="100%" height="100%" src="{% static 'img/social_media.png' %}"></a>
+        </div>
+        <div class="col-md-3" style="height: 300px;">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img width="100%" height="100%" src="{% static 'img/voiceofimage.jpg' %}"></a>
+        </div>
+        <div class="col-md-3">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img src=""></a>
+        </div>
+        <div class="col-md-3">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img src=""></a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

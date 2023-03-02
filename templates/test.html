@@ -1,0 +1,46 @@
+{% extends 'header.html' %}
+{% load  static %}
+{% block title %}
+{% load crispy_forms_tags %}
+Dowell App
+{% endblock title %}
+{% block content %}
+<!--<div class="input-group">-->
+<!--  <input type="text" aria-label="First name" class="form-control">-->
+<!--  <input type="text" aria-label="Last name" class="form-control">-->
+<!--</div>-->
+
+<video id="video" width="320" height="240" autoplay></video>
+<canvas id="canvas" width="320" height="240"></canvas>
+<button id="click-photo" class="btn btn-success">Click Photo</button>
+<button id="start-camera" class="btn btn-success">Start Camera</button>
+
+<script>
+    let camera_button = document.querySelector("#start-camera");
+
+let video = document.querySelector("#video");
+let click_button = document.querySelector("#click-photo");
+let canvas = document.querySelector("#canvas");
+var stream;
+camera_button.addEventListener('click', async function() {
+   	stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+	video.srcObject = stream;
+
+    // stream.getAudioTracks()[0].stop();
+    // audio.src = '';
+
+});
+
+
+
+click_button.addEventListener('click', function() {
+   	canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+   	let image_data_url = canvas.toDataURL('image/jpeg');
+    stream.getVideoTracks()[0].stop();
+    video.srcObject = null;
+    camera_button.innerHTML='Try again';
+   	// data url of the image
+});
+</script>
+
+{% endblock content %}

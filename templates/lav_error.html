@@ -1,0 +1,30 @@
+{% extends 'lav_base.html' %}
+{% load  static %}
+{% block title %}
+Dowell App
+{% endblock title %}
+
+{% block content %}
+<link href="{%static 'css/test.css' %}" rel="stylesheet">
+
+<div class="container1 bg-light">
+    <div class="imgp"><img style="width:100%;height: 100%" src="{% static 'img/lav.png' %}"/></div>
+    <div class="fdown">
+        <div class="row justify-content-center">
+               
+                    <center>
+                        <div class="mt-5 text-dark" style="font-size: 40px;">{%if 'Recognised' in link %}<a href="logincode">{{link}}</a>{%else%}{{link}}{%endif%}</div>
+                        <div class="mt-5 text-dark" style="font-size: 40px;">{{network}}</div>
+                        <a href="#f">
+                        <div class="mt-5 text-success" style="font-size: 30px;">{{system}}</div>
+                    
+                </a>
+                    <h3 class="mt-5"></h3>
+                   <a href="#">
+                    <div class="mt-5 text-success" style="margin-bottom: 15%;font-size: 30px;">Direct link</div></a>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

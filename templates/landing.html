@@ -1,0 +1,482 @@
+
+<!doctype html>
+<html lang="en">
+{% load  static %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://getbootstrap.com/docs/5.2/assets/css/docs.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      text-decoration: none;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-image: url('{% static 'img/background.jpg' %}');
+    }
+
+    a,
+    a:visited,
+    a:active {
+      text-decoration: none !important;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: dashed 2px #0c617d;
+    }
+
+    .nav.navbar-nav.navbar-right li a, a.nav-link, .navbar-brand {
+    color: black;
+}
+
+    .menu-grid {
+      text-align: right;
+      padding: 0px 0;
+    }
+
+    .menu-grid .btn-group {
+      margin-right: 10px;
+    }
+
+    .menu-grid .dropdown-toggle,
+    .menu-grid .dropdown-toggle:hover,
+    .menu-grid .dropdown-toggle:focus,
+    .menu-grid .dropdown-toggle:active,
+    .menu-grid .btn-group.open .dropdown-toggle {
+      border: 0;
+      float: right;
+      box-shadow: none;
+      background: transparent;
+    }
+
+    .menu-grid .dropdown-menu {
+      margin: 0;
+      border: 0;
+      padding: 0;
+      left: auto;
+      right: 35px;
+      margin-top: 10px;
+      box-shadow: none;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      -ms-border-radius: 3px;
+      -o-border-radius: 3px;
+      border-radius: 3px;
+      background-color: #ffffff;
+      -webkit-box-shadow: 0 1px 8px 0 #393939;
+      -moz-box-shadow: 0 1px 8px 0 #393939;
+      -ms-box-shadow: 0 1px 8px 0 #393939;
+      -o-box-shadow: 0 1px 8px 0 #393939;
+      box-shadow: 0 1px 8px 0 #393939;
+    }
+
+    .menu-grid .list {
+      width: 380px;
+      position: relative;
+      padding: 15px 25px;
+    }
+
+    .menu-grid .list:after {
+      bottom: 100%;
+      right: 20px;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      border-color: rgba(136, 183, 213, 0);
+      border-bottom-color: #FFFFFF;
+      border-width: 8px;
+      margin-right: 0px;
+    }
+
+    .menu-grid .list .menu {
+      padding: 0px 0;
+      color: #333333;
+      text-align: center;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      -ms-border-radius: 2px;
+      -o-border-radius: 2px;
+      border-radius: 2px;
+      text-transform: capitalize;
+      text-decoration: none;
+      border: 1px solid transparent;
+      -webkit-box-shadow: 0 0 1px 0 transparent;
+      -moz-box-shadow: 0 0 1px 0 transparent;
+      -ms-box-shadow: 0 0 1px 0 transparent;
+      -o-box-shadow: 0 0 1px 0 transparent;
+      box-shadow: 0 0 1px 0 transparent;
+    }
+
+    .menu-grid .list .menu:hover {
+      background-color: #f5f5f5;
+      border: 1px solid #e8e8e8;
+      -webkit-box-shadow: 0 0 1px 0 #dddddd;
+      -moz-box-shadow: 0 0 1px 0 #dddddd;
+      -ms-box-shadow: 0 0 1px 0 #dddddd;
+      -o-box-shadow: 0 0 1px 0 #dddddd;
+      box-shadow: 0 0 1px 0 #dddddd;
+    }
+.content1 {
+
+            margin:5% auto;
+            background-color: #e8eae6;
+            display: none;
+            color:yellow;
+            /*to hide popup initially*/
+        }
+
+        .close-btn {
+            float:right;
+            cursor:pointer;
+            right: 5px;
+            top: 0%;
+            /*background-color: red;*/
+            color: white;
+            border-radius: 50%;
+            padding: 4px;
+        }
+    .menu-grid .menu span {
+      width: 55px;
+      /* height: 55px; */
+      display: block;
+      margin: 0 auto 10px;
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      -ms-border-radius: 50%;
+      -o-border-radius: 50%;
+      border-radius: 50%;
+      /* background-image: url('v1_376447c3.png'); */
+    }
+
+    @media only screen and (max-device-width: 768px) {
+      .menu-grid .dropdown-menu {
+        margin: 0;
+        border: 0;
+        padding: 0;
+        /* left: auto; */
+        right: -1vw;
+        margin-top: 5px;
+        box-shadow: none;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+        -o-border-radius: 3px;
+        border-radius: 3px;
+        background-color: #ffffff;
+        -webkit-box-shadow: 0 1px 8px 0 #393939;
+        -moz-box-shadow: 0 1px 8px 0 #393939;
+        -ms-box-shadow: 0 1px 8px 0 #393939;
+        -o-box-shadow: 0 1px 8px 0 #393939;
+        box-shadow: 0 1px 8px 0 #393939;
+      }
+
+    }
+
+    .home-nav {
+      padding: 10px;
+    }
+
+    .menu {
+      min-height: 113px;
+    }
+  </style>
+  <title>Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body class="">
+
+  <!-- Example Code -->
+<div class="bg-black text-light text-right " style="height: 3vh;font-size: 2vh; width: 100%;"><a href="sign-out" class="text-light"><i  class="material-icons">&nbsp; logout </i></a><span style="float:right">
+                </span></div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light text-dark">
+    <div class="container-fluid row">
+      <div class="col-1 d-lg-none">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+
+      <a class="navbar-brand col-1" href="#">Welcome {{request.user.username}}</a>
+
+      <ul class="navbar-nav col-7 d-none d-md-none d-lg-flex">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="main">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}">Social_Media</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="https://100039.pythonanywhere.com/user/?session_id={{request.session.session_key}}">Client_Report</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="https://100043.pythonanywhere.com/exhibitors/?session_id={{request.session.session_key}}">Exhibitor</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://100068.pythonanywhere.com/?session_id={{request.session.session_key}}">Licenses</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://ll04-finance-dowell.github.io/100069-dowellchat-frontend/?session_id={{request.session.session_key}}">Chat</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://100035.pythonanywhere.com/nps-admin/?session_id={{request.session.session_key}}">Scale</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://100025.pythonanywhere.com/?session_id={{request.session.session_key}}">Feedback</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://100079.pythonanywhere.com/?session_id={{request.session.session_key}}">Admin</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://npslive.org/?session_id={{request.session.session_key}}">NPS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://ll07-team-dowell.github.io/DowellJobPortal/#/?session_id={{request.session.session_key}}">HR</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="http://100084.pythonanywhere.com/?session_id={{request.session.session_key}}">WorkflowAi</a>
+        </li>
+        {% if "Admin" in user.role %}
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="togglePopup()">Create Users</a>
+        </li>
+         <script type="text/javascript">
+
+        // Function to show and hide the popup
+        function togglePopup() {
+            $(".content1").toggle();
+
+    $(".container").fadeOut(200).toggle();
+
+        }
+    </script>
+                {% endif %}
+
+      </ul>
+
+      <div class="col-1 menu-grid">
+        <div class="navbar-header ">
+        </div>
+        <div class="btn-group">
+          <i class="material-icons">apps</i>
+          <div class="dropdown-menu" role="menu">
+            <div class="list row row-cols-2 row-cols-md-3">
+              <div class="col">
+                <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}">
+                  <span class="blog"></span>
+                  <div class="menu"><span><i class="material-icons">language</i></span>Social Media Listening</div>
+                </a>
+              </div>
+              <div class="col">
+                <a href="#">
+                  <div class="menu"><span><i class="material-icons">groups</i></span>Focus Groups & Interviews</div>
+                </a>
+              </div>
+              <div class="col">
+                <a href="#">
+                  <div class="menu"><span><i class="material-icons">content_paste</i></span>surveys</div>
+                </a>
+              </div>
+              <div class="col">
+                <a href="https://100069.pythonanywhere.com/?session_id={{request.session.session_key}}">
+                  <span class="blog"></span>
+                  <div class="menu"><span><i class="material-icons">email</i></span>Email, Chat & Call Data</div>
+                </a>
+              </div>
+              <div class="col">
+                <a href="https://100035.pythonanywhere.com/nps-admin/?session_id={{request.session.session_key}}">
+                  <div class="menu"><span><i class="material-icons">sentiment_satisfied</i></span>Dowell Scale</div>
+                </a>
+              </div>
+              <div class="col">
+                <a href="#">
+                  <div class="menu"><span><i class="material-icons">hotel_class</i></span>Customer Reviews</div>
+                </a>
+              </div>
+              <div class="col">
+                <a href="#">
+                  <div class="menu"><span><i class="material-icons">forum</i></span>Blogs & Forums</div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+  <div class="collapse navbar-collapse p-3" id="navbarSupportedContent">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <li class="nav-item">
+        <a class="nav-link" aria-current="page" href="#">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}">Social_Media</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="https://100039.pythonanywhere.com/user/?session_id={{request.session.session_key}}">Client_Report</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="https://100043.pythonanywhere.com/?session_id={{request.session.session_key}}">Exhibitor</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://100068.pythonanywhere.com/?session_id={{request.session.session_key}}">Licenses</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://ll04-finance-dowell.github.io/100069-dowellchat-frontend/?session_id={{request.session.session_key}}">Chat</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://100035.pythonanywhere.com/nps-admin/?session_id={{request.session.session_key}}">Scale</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://100025.pythonanywhere.com/?session_id={{request.session.session_key}}">Feedback</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://100079.pythonanywhere.com/?session_id={{request.session.session_key}}">Admin</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="https://npslive.org/?session_id={{request.session.session_key}}">NPS</a>
+        </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://ll07-team-dowell.github.io/DowellJobPortal/#/?session_id={{request.session.session_key}}">HR</a>
+      </li>
+    </ul>
+
+  </div>
+
+  <div style="margin: 13px; text-align: center;">
+      <div class="container">
+       <div class="row mt-4">
+        <div class="col-md-3" style="height: 300px;">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img width="100%" height="100%" src="{% static 'img/social_media.png' %}"></a>
+        </div>
+        <div class="col-md-3" style="height: 300px;">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img width="100%" height="100%" src="{% static 'img/voiceofimage.jpg' %}"></a>
+        </div>
+        <div class="col-md-3">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img src=""></a>
+        </div>
+        <div class="col-md-3">
+            <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" target="_blank"><img src=""></a>
+        </div>
+    </div>
+    </div>
+      <center>
+    <div class="content1 col-md-4 bg-dark">
+        <div class="row">
+            <div class="col-md-12">
+        <div onclick="togglePopup()" class="close-btn">
+            X
+        </div>
+        <h3 class="text-light">Create Users</h3>
+<form action="/createusers" class="form-inline" method="POST">
+    {% csrf_token %}
+         <div class="form-group col-md-8">
+             <label for="user" class="" style="float:left">Username pattern</label>
+         <input type="text" name="userpattern" id="user" class="form-control col-md-4" placeholder="Username Pattern"></div>
+         <div class="form-group col-md-8">
+             <label for="role" class="" style="float:left">Role</label>
+        <select  name="role" id="role" class="form-control">
+                    <option value="TeamMember">Team Member</option>
+                    <option value="Freelancer" selected>Freelancer</option>
+                  </select></div>
+         <div class="form-group col-md-8">
+             <label for="teamcode" class="" style="float:left">Team Code</label>
+         <input type="text" name="teamcode" id="teamcode" class="form-control col-md-4" placeholder="Team Code" required></div>
+         <div class="form-group col-md-8 mb-3">
+             <label for="qty" class="" style="float:left">Number of Users</label>
+         <input type="number" name="qty" id="qty" class="form-control col-md-4" placeholder="qty" required></div>
+         <input type="submit" class="btn btn-success mb-5" value="Create">
+
+
+
+</form>
+</div>
+    </div>
+    </div>
+</center>
+    <!--<section>-->
+
+    <!--</section>-->
+
+  </div>
+
+
+  <!-- Footer -->
+  <footer class="footer fixed-bottom font-small bg-dark text-light pt-4">
+
+    <!-- Footer Links -->
+    <div class="container-fluid text-center text-md-left">
+
+      <!-- Grid row -->
+      <div class="row">
+
+        <!-- Grid column -->
+        <div class="col mt-md-0 mt-3">
+
+          <!-- Content -->
+          <h5 class="text-uppercase">DoWell UX Living Lab</h5>
+          <p>
+
+          </p>
+
+        </div>
+        <!-- Grid column -->
+
+
+
+      </div>
+      <!-- Grid row -->
+
+    </div>
+    <!-- Footer Links -->
+
+    <!-- Copyright -->
+    <div class="footer-copyright text-center py-3 text-light">
+
+      © 2022 Copyright :
+      <a href="#"> DoWell UX Living Lab</a>
+    </div>
+    <!-- Copyright -->
+
+
+  </footer>
+  <!-- Footer -->
+
+  <!-- End Example Code -->
+
+  <script>
+    $(document).ready(function () {
+      // $('.dropdown-menu').show();
+      $('.menu-grid .btn-group').hover(function () {
+        $('.dropdown-menu', this).stop(true, true).delay(200).fadeIn();
+      }, function () {
+        $('.dropdown-menu', this).stop(true, true).delay(500).fadeOut('fast');
+      });
+
+      $("document").click(function () {
+        $(".dropdown-menu").hide();
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,166 @@
+{% load i18n %}
+{% load  static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<!--  {% if success %}-->
+<!--  <script>-->
+<!--      alert({{success}})-->
+<!--  </script>-->
+<!--{%endif%}-->
+ <style>
+     .sbutton {
+    border: none;
+    border-radius: 25px;
+    background-color: #eae745;
+    color: rgb(224, 91, 25);
+    font-size:14px;
+    font-weight: bolder;
+    cursor: pointer;
+
+}
+
+.butonsub {
+    width : 80%;
+    display: flex;
+    font-size:1em;
+    justify-content: space-between;
+}
+
+.ba {
+    align-self: flex-start;
+    justify-self: left;
+}
+.bb {
+
+    align-self: flex-end;
+    justify-self: left;
+}
+.bc {
+
+    align-self: flex-end;
+    justify-self: right;
+}
+.lowerbutton {
+    background-color: #98eb34;
+    font-size:20px;
+    width: 80%;
+    height: 40px;
+    font-weight: bold;
+    padding: 0;
+    border: 0
+    margin-bottom:20px;
+}
+.bcontainer {
+    margin-top: 10px;
+    width: 100%;
+
+
+
+}
+ </style>
+  <script>
+    var mbuttons =[];
+
+$(document).ready(function() {
+
+    // Get mbuttons list
+    mbuttons = document.getElementsByClassName("sbutton");
+    console.log(mbuttons);
+
+
+    if (mbuttons.length > 0) {
+        for (var i = 0; i < mbuttons.length; i++) {
+            mbuttons[i].addEventListener("click", function() {
+
+               console.log(this.id);
+               setrating(this.id);
+            //   para = document.getElementById("lg").innerHTML=this.id;
+               document.getElementById("myText").value=this.id
+
+            });
+        }
+
+    }
+
+});
+
+setrating = function(id) {
+    for (var i = 0; i < mbuttons.length; i++) {
+        if (+id >= +mbuttons[i].id) {
+            mbuttons[i].style.color = "white";
+            mbuttons[i].style.background = "blue";
+        }else {
+            mbuttons[i].style.color = "red";
+            mbuttons[i].style.background = "yellow";
+        }
+
+    }
+}
+</script>
+</head>
+<body>
+
+<div class="container d-flex justify-content-center">
+
+  <div class="row ">
+    <div class="col-sm-4"></div>
+    <div class="col-sm-4" style="border:silver 2px solid" >
+
+    <center><img src="https://100014.pythonanywhere.com/media/brandlogos/thumbnails/{{logo}}" width="90%" height="100%" style="height:150px" alt="your logo"></center>
+    <!--<center><img src="{%static 'img/yourlogo.png' %}" style="height:150px" height="100%" alt="your logo"></center>-->
+
+       <div style="font-size:20px">Considering your experience with <b>{{brand}}</b>, how likely would you be to recommend <b>{{product}}</b> to your friend or colleague<br>
+       <h4 class="card-title text-center font-weight-bold"><u>Select Your score</u></h4>
+            <center><div class='bcontainer'>
+                <button class='sbutton' id="1">1</button>
+                <button class='sbutton' id="2">2</button>
+                <button class='sbutton' id="3">3</button>
+                <button class='sbutton' id="4">4</button>
+                <button class='sbutton' id="5">5</button>
+                <button class='sbutton' id="6">6</button>
+                <button class='sbutton' id="7">7</button>
+                <button class='sbutton' id="8">8</button>
+                <button class='sbutton' id="9">9</button>
+                <button class='sbutton' id="10">10</button></center>
+               <!-- <form action="" method="POST">-->
+               <!--     {% csrf_token %}-->
+               <!--     <input type="text" name="rate" hidden>-->
+               <!--     <input type="text" name="brand" value="{{brand}}" hidden>-->
+               <!--     <input type="text" name="logoname" value="naga" hidden>-->
+               <!--     <input type="text" name="product" value="{{product}}" hidden>-->
+
+
+               <!--<center> <button class='sbutton'>0</button>-->
+               <!--<center>-->
+<!--</form>-->
+
+
+</center>
+              </div>
+            <center>
+              <div class='butonsub'>
+
+                <div class='ba'>Very unlikely</div>
+                <div class='bb'></div>
+                <div class='bc'>Very likely</div>
+              </div></center><br>
+              <h3 class="text-success">{{success}}</h3>
+              <center><button class="lowerbutton"> <a href="sendfeed?brand={{brand}}&product={{product}}&logo={{logo}}" style="color:black;text-decoration:none">Send</a></button>
+              <!--<center><button class="lowerbutton"> <a href="scale?brand={{brand}}&product={{product}}&logo={{logo}}" style="color:black;text-decoration:none">Create new Scale</a></button>-->
+    </div>
+</center>
+    </div>
+    <div class="col-sm-4"></div>
+  </div>
+</div>
+
+</body>
+</html>
+

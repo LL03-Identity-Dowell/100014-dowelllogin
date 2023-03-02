@@ -1,0 +1,118 @@
+{% extends 'lav_base.html' %}
+{% load  static %}
+{% block title %}
+{% load crispy_forms_tags %}
+Dowell App
+{% endblock title %}
+{% block content %}
+<style type="text/css">
+        .content1 {
+
+            margin:5% auto;
+            background-color: #e8eae6;
+            display: none;
+            color:yellow;
+            /*to hide popup initially*/
+        }
+
+        .close-btn {
+            float:right;
+            cursor:pointer;
+            right: 5px;
+            top: 0%;
+            /*background-color: red;*/
+            color: white;
+            border-radius: 50%;
+            padding: 4px;
+        }
+    </style>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a href="#" class="navbar-brand">Menu</a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav">
+                <a href="/main" class="nav-item nav-link active">Home</a>
+                <a href="https://100007.pythonanywhere.com/?session_id={{request.session.session_key}}" class="nav-item nav-link">Social Media Automation</a>
+                <a href="https://100039.pythonanywhere.com/user/?session_id={{request.session.session_key}}" class="nav-item nav-link">Client Report</a>
+                <a href="https://100043.pythonanywhere.com/exhibitors/?session_id={{request.session.session_key}}" class="nav-item nav-link">exhibitior</a>
+              	<a href="https://100068.pythonanywhere.com/?session_id={{request.session.session_key}}" class="nav-item nav-link">licenses</a>
+                <a href="#" class="nav-item nav-link">Voice of Customer</a>
+                {% if "Admin" in user.role %}
+                <a href="#" class="nav-item nav-link" onclick="togglePopup()">Create Users</a>
+                <!-- Button trigger modal -->
+
+    <!-- div containing the popup -->
+
+    <script type="text/javascript">
+
+        // Function to show and hide the popup
+        function togglePopup() {
+            $(".content1").toggle();
+
+    $(".container").fadeOut(200).toggle();
+
+        }
+    </script>
+                {% endif %}
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a href="#" class="nav-item nav-link">{{request.user.username}}{{api}}</a>
+                <a href="logout" class="nav-item nav-link">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<center>
+    <div class="content1 col-md-4 bg-dark">
+        <div class="row">
+            <div class="col-md-12">
+        <div onclick="togglePopup()" class="close-btn">
+            X
+        </div>
+        <h3 class="text-light">Create Users</h3>
+<form action="/createusers" class="form-inline" method="POST">
+    {% csrf_token %}
+
+
+         <div class="form-group col-md-8">
+             <label for="user" class="" style="float:left">Username pattern</label>
+         <input type="text" name="userpattern" id="user" class="form-control col-md-4" placeholder="Username Pattern"></div>
+         <div class="form-group col-md-8">
+             <label for="role" class="" style="float:left">Role</label>
+        <select  name="role" id="role" class="form-control">
+                    <option value="TeamMember">Team Member</option>
+                    <option value="Freelancer" selected>Freelancer</option>
+                  </select></div>
+         <div class="form-group col-md-8">
+             <label for="teamcode" class="" style="float:left">Team Code</label>
+         <input type="text" name="teamcode" id="teamcode" class="form-control col-md-4" placeholder="Team Code" required></div>
+         <div class="form-group col-md-8 mb-3">
+             <label for="qty" class="" style="float:left">Number of Users</label>
+         <input type="number" name="qty" id="qty" class="form-control col-md-4" placeholder="qty" required></div>
+         <input type="submit" class="btn btn-success mb-5" value="Create">
+
+
+
+</form>
+</div>
+    </div>
+    </div>
+</center>
+<div class="container mt-5">
+            <div class="row">
+                <table class="table table-bordered bg-dark" style="font-size:26px">
+                    <tr class="bg-light"><td colspan="3" ><h1 align="center"  style="color:{% if 'Error' in errorusers %} red {%endif%} green !important;">{{errorusers}}</h1></td></tr>
+                    <tr class="bg-warning text-warning">
+                        <th>Username</th><th>Password</th><th>link</th>
+                    </tr>
+
+                {% for i,r,t in ls %}<tr class="text-warning"> <td>{{i}}</td><td>{{r}}</td><td>{{t}}</td></tr> {% endfor %}
+                </table>
+
+    </div>
+</div>
+
+{% endblock content %}

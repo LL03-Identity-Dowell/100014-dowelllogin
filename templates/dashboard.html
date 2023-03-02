@@ -1,0 +1,34 @@
+{% extends 'lav.html' %}
+{% load  static %}
+{% block title %}
+{{title}}
+{% endblock title %}
+{{title}}
+{% block content %}
+<link href="{%static 'css/test.css' %}" rel="stylesheet">
+<script>
+    function hideLoader() {
+    $('#loading').hide();
+}
+
+$(window).ready(hideLoader);
+
+// Strongly recommended: Hide loader after 20 seconds, even if the page hasn't finished loading
+setTimeout(hideLoader, 20 * 1000);
+</script>
+<style>
+    #loading {
+    background: url('{%static "img/hourglass.gif" %}') no-repeat center center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 9999999;
+}
+</style>
+<div class="container">
+   <div id="loading"></div>
+   <div>Narajup</div>
+</div>
+{% endblock content %}

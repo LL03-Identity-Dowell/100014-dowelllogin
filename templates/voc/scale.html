@@ -1,0 +1,187 @@
+
+{% load i18n %}
+{% load  static %}
+<html lang="en">
+<head>
+{% for default in defaults %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link rel="stylesheet" href="{%static 'voc/css/scale.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VOC_NPS</title>
+    <form method="POST" action="../sendscale">
+    <input type="text" id="rating" name="rate" hidden>
+<script>
+    var mbuttons =[];
+
+$(document).ready(function() {
+
+    // Get mbuttons list
+    mbuttons = document.getElementsByClassName("number");
+    console.log(mbuttons);
+
+
+    if (mbuttons.length > 0) {
+        for (var i = 0; i < mbuttons.length; i++) {
+            mbuttons[i].addEventListener("click", function() {
+
+               console.log(this.id);
+               setrating(this.id);
+            //   para = document.getElementById("lg").innerHTML=this.id;
+               //document.getElementById("myText").value=this.id
+               document.getElementById("rating").value=this.id
+
+            });
+        }
+
+    }
+
+});
+
+setrating = function(id) {
+    for (var i = 0; i < mbuttons.length; i++) {
+        if (+id >= +mbuttons[i].id) {
+            mbuttons[i].style.color = "white";
+            mbuttons[i].style.background = "#5cb85c";
+        }else {
+            mbuttons[i].style.color = "red";
+            mbuttons[i].style.background = "{{default.rcolor}}";
+        }
+
+    }
+}
+</script>
+</head>
+<body>
+<div class="container ">
+<div class="row mt-4">
+    <div class="col-sm-2 {{bglight}}" style="{{left}}">
+        <div class="text-dark"><h2 align="center"><u>{{hist}}</u></h2></div>
+        <table>
+            {% for nps in npsall %}
+
+        <tr>
+            <td><a href="https://100014.pythonanywhere.com/nps/dowellscale/{{nps.template_name}}">{{nps.template_name}}</a></td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <div class="col-sm-8 bg-light" style="border:silver 2px solid; box-shadow:2px 2px 2px 2px rgba(0,0,0,0.3)" >
+        <h1 align="center" class="text-danger"><b>{{default.name}}</b></h1><br>
+        <center><img style="height:200px" src="https://100014.pythonanywhere.com/media/brandlogos/{{logo}}" width="80%" height="100%" alt="your logo"></center>
+        
+        <div class="p-3 text-danger" style="background:#FFD580"><h2>Considering your experience with <b>{{brand}}</b>, how likely would you be to recommend <b>{{product}}</b> to your friend or colleague</h2></div><br>
+        <div id="horizontal" style="height:50px;background:{{default.scolor}}"></div>
+        <div class="pl-3" style="font-size:2em">
+               <div style="float: left">{{text.0}}</div>
+                <div style="float: right">{{text.2}}</div>
+                <div style="margin: 0 auto; width: 30%;">{{text.1}}</div>
+        </div>
+        <br>
+        <div class="pb-4">
+            <a style="float:right" href="{{url}}" class="{{btn}}">{{urltext}}</a>
+            <br>
+        </div>
+        
+            {%csrf_token%}
+            <input type="text" name="brand" value="{{brand}}" hidden>
+            <input type="text" name="product" value="{{product}}" hidden>
+            <!--<input type="text" id="rating" name="rate" value="">-->
+            <center><button class="btn btn-success">Send</button></center>
+        </form>
+    </div>
+    <script>
+                var vert="vertical";
+                var hori="horizontal";
+                var name="number";
+                var n={{default.rating}};
+                            for (let i = 0; i <= n-1; i++) {
+                    const para = document.createElement("p");
+                    para.innerHTML = i;
+                    para.id=i
+                    para.classList.add("number");
+                    document.getElementById("horizontal").appendChild(para);
+                    document.getElementById(i).innerHTML = i;
+                    document.getElementById(i).style.backgroundColor ="{{default.rcolor}}" //$("#fcolor").val();
+                    document.getElementById(i).style.color ="{{default.fcolor}}" //$("#scolor").val();
+                }
+               function preview(){
+                $("#red").attr('class', $("#orientation").val());
+                $('#horizontal').attr("id", $("#orientation").val());
+                em=$("#orientation").val();
+                $('#'+em).empty();
+                n = $("#numberof").val();
+                //alert('#'+rt+" "+$("#bgcolor").val());
+                $('#red').css({"backgroundColor": $("#scolor").val()});
+                var name = $('#format').val();
+                ram(name,n);
+
+               }
+                //             for (let i = 1; i <= n; i++) {
+                //     const para = document.createElement("p");
+                //     para.innerHTML = i;
+                //     para.id="demo"+i
+                //     document.getElementById("horizontal").appendChild(para);
+                //    document.getElementById("demo"+i).innerHTML = i;
+                //    document.getElementById("demo"+i).style.backgroundColor = $("#fcolor").val();
+                //    document.getElementById("demo"+i).style.color = $("#scolor").val();
+                // }
+                function ram(star,num){
+                    for (let i = 1; i <= num; i++) {
+                    const para = document.createElement("span");
+
+             		// if (star==="stars"){
+             		// 	para.innerHTML="Naga";
+             		// }else{
+             		// 	para.innerHTML = i;
+             		// }
+
+                    para.id=i
+                    document.getElementById($("#orientation").val()).appendChild(para);
+                    if (star==="stars"){
+             			document.getElementById(i).innerHTML = '<i class="fa fa-star"></i>';
+             			document.getElementById(i).style.backgroundColor = $("#rcolor").val();
+             		}
+             		else if(star==="emoji"){
+             			document.getElementById(i).innerHTML = '<i class="far fa-grin"></i>';
+             			document.getElementById(i).style.backgroundColor = $("#scolor").val();
+
+             		}
+             		else{
+             			document.getElementById(i).innerHTML = i;
+             			document.getElementById(i).style.backgroundColor = $("#rcolor").val();
+             		}
+
+
+                   document.getElementById(i).style.color = $("#fcolor").val();
+                }
+                }
+
+
+                // looping from i = 1 to 5
+
+                // for (let i = 1; i <= n; i++) {
+                // 	const para = document.createElement("span");
+                //     const para1 = document.createElement("p");
+                //     para1.innerHTML=i;
+                // para.innerHTML = i;
+                // para.id="demo"+i
+                // // Append to another element:
+                // document.getElementById("vertical").appendChild(para);
+                // document.getElementById("red").appendChild(para1);
+                //    document.getElementById("demo"+i).innerHTML = i;
+                //    document.getElementById("demo"+i).style.background = "rgb(242, 208, 181)"
+
+                // }
+
+
+                </script>
+    <div class="col-sm-2"></div>
+    {% endfor %}
+</div>

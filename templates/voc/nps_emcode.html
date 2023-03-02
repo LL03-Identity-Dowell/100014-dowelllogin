@@ -1,0 +1,75 @@
+
+{% load i18n %}
+{% load  static %}
+<html lang="en">
+<head>
+<style>
+    .btn-file {
+  position: relative;
+  overflow: hidden;
+}
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;
+  background: white;
+  cursor: inherit;
+  display: block;
+}
+#myform label {
+    float:left;
+}
+</style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{%static 'voc/css/style.css' %}" rel="stylesheet">
+    <title>VOC_NPS</title>
+<script>
+    function previewFile(input){
+        var file = $("input[type=file]").get(0).files[0];
+
+        if(file){
+            var reader = new FileReader();
+
+            reader.onload = function(){
+                $("#previewImg").attr("src", reader.result);
+            }
+
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+</head>
+<body>
+    <div class="mroot">
+        <form action="qrcode" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+        <center>
+     <div style="color:yellow; width:150px; height:150px;"><img width="100%" height="100%" id="previewImg" src="{%static 'img/yourlogo.png' %}" class="rounded-circle" alt="Placeholder"></div><br>
+<span class="btn btn-success btn-file" >
+  Select Your logo...<input type="file" name="logo" id="photofile" accept="image/*;capture=camera" onchange="previewFile(this);" required>
+</span><br>
+        <input type="text" name="brand" id="brandname" placeholder="Enter your Brand name" required>
+        <input type="text" name="product" id="productname" placeholder="Enter your Product name" required></center>
+
+        <div class="pre"><input class="chbox" type="checkbox" name="checkbox" value="True" id="check" required> <p style="margin-top:-24px; margin-left:16px"><b><span style="margin-left:8px">Disclaimer</span></b>  - We may process your user Information where: you have given your consent; the processing is necessary for a contract between you and us; the processing is required by applicable law; the processing is necessary to protect the vital interests of any individual; or where we have a valid legitimate interest in the processing.
+
+Any action you take upon the information you find on this website is strictly at your own risk. We will not be liable for any losses and/or damages in connection with the use of our website.
+        </p></div><br>
+<center>
+        <button class="lowerbutton"><u>Create Embedding Code</u></button></center>
+        </form>
+
+    </div>

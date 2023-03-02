@@ -1,0 +1,88 @@
+
+    #vertical{
+        margin-left: 5%;
+        width:10%;
+        position: relative;
+        text-align: center;
+    }
+    #horizontal{
+        position: relative;
+        text-align: center;
+        width: 100%;
+    }
+    #horizontal p{
+    color:orangered;
+    margin-left:1%;
+    font-weight: bold;
+    text-align:center;
+    line-height: 80px;
+    width:9%;
+    float:left;
+    font-size:2em;
+    height:80px;
+    border-radius:50%;
+    /*background-color:red;*/
+    }
+    #vertical p{
+    color:orangered;
+    font-weight: bold;
+    text-align:center;
+
+    font-size:2em;
+    height:9%;
+    border-radius:50%;
+    }
+    #horizontal span{
+
+    color:orangered;
+    margin-left:1%;
+    font-weight: bold;
+    text-align:center;
+    line-height: 80px;
+    width:9%;
+    float:left;
+    font-size:2em;
+    height:80px;
+    border-radius:50%;
+    /*background-color:red;*/
+    }
+    #vertical span{
+    color:orangered;
+    font-weight: bold;
+    text-align:center;
+
+    font-size:2em;
+    height:30px;
+    border-radius:50%;
+    }
+    .vertical{
+        background-color: rgb(248, 162, 100);
+        width: 10%;
+        height: 100%;
+        position: absolute;
+    }
+    .horizontal{
+        background-color: rgb(248, 162, 100);
+        width: 96%;
+        height: 50px;
+        position: absolute;
+        text-align: center !important;
+
+    }
+  div.a {
+  text-align: justify; /* For Edge */
+  -moz-text-align-last: right; /* For Firefox prior 58.0 */
+  text-align-last: right;
+}
+
+div.b {
+  text-align: justify; /* For Edge */
+  -moz-text-align-last: center; /* For Firefox prior 58.0 */
+  text-align-last: center;
+}
+
+div.c {
+  text-align: justify; /* For Edge */
+  -moz-text-align-last: justify; /* For Firefox prior 58.0 */
+  text-align-last: justify;
+}

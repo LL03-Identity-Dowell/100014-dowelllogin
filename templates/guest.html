@@ -1,0 +1,51 @@
+{% extends 'header.html' %}
+{% load i18n %}
+{% load  static %}
+{% block title %}
+
+Dowell App
+{% endblock title %}
+{% block content %}
+<div class="container" style="color:yellow">
+<div class="row justify-content-center mt-5 ">
+    <div class="col-md-6 bg-dark">
+    <h1 align="center"><b>Join us</b></h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6 bg-dark" style="box-shadow:2px 2px 2px 2px rgba(0,0,0,0.2">
+  <form action="" method="POST">
+        {% csrf_token %}
+        <center>
+        <div class="col-md-8 justify-content-center">
+            <div class="row ">
+        <div class="form-group col-md-12 mb-0">
+            <label for="username" class="" style="float:left">
+                Name <span class="asterisk"> *</span>
+            </label>
+        <input type="text" name="user" class="form-control col-md-12" placeholder="Name"  id="username" required>
+        </div>&nbsp;&nbsp;
+        <div class="form-group col-md-12 mb-0">
+            <label for="email" class="" style="float:left">
+                Email<span class="asterisk"> *</span>
+            </label>
+        <input type="email" name="email" placeholder="Email" class="form-control" id="email" required>
+        </div>
+        </div>
+        </div></center>
+        <center>
+            <br><br>
+        <input  class="btn btn-success mt-6" type="submit" value="Proceed"><br><br>
+        <font color="white">Want to do full signup? <a href="register" style="color:yellow;"><b> Click here</b></a>  </font><br><br>
+        <font color="white">Already have an account ? <a href="/" style="color:yellow;"><b> Sign In</b></a>  </font>
+        </center>
+
+
+</form>
+</div>
+<div class="col-md-3"></div>
+</div>
+</div>
+<div id="footer"></center></div>
+{% endblock content %}

@@ -1,0 +1,25 @@
+{% extends 'lav.html' %}
+{% load  static %}
+{% block title %}
+{{title}}
+{% endblock title %}
+{{title}}
+{% block content %}
+<link href="{%static 'css/test.css' %}" rel="stylesheet">
+<style>
+    a{
+        text-decoration:none;
+    }
+</style>
+<div class="container">
+    <center>
+    <div class="row">
+        <div class="text-dark"><h1>{%if 'not Recognised' in face %}<a href="lang1">{{face}}</a>{%else%}<a style="color:green" href="login">{{face}}{%endif%}</a></h1></div>
+    </div>
+    <div class="row mt-10" style="margin-top:30%">
+        <div class="text-dark"><h1>{%if 'Error' in network %}<a href="nwerror">{{network}}</a>{%else%}<span style="color:green">{{network}}</span>{%endif%}</h1></div><br><br>
+        <br>
+        <div class="text-dark"><h1>{%if 'Error' in system %}<a href="syserror">{{system}}</a>{%else%}<span style="color:green">{{system}}</span>{%endif%}</h1></div>
+    </div></center>
+</div>
+{% endblock content %}

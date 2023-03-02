@@ -1,0 +1,39 @@
+
+<div class="container1">
+<div style="width:100%; float:left">
+    <div class="imgp1"><img style="width:100%;height: 100%;" src=""/>{{user}}</div>
+    <div style="float:right"><a href="#"><i class='fas fa-user-circle' style='font-size:30px;margin-top:30px;color:black !important'></i></a>&nbsp;&nbsp;<a href="logout"><i class='fas fa-power-off' style='font-size:30px;color:black !important'></i></a></div>
+</div>
+<br>
+<center>
+  <form action="" method="POST">
+
+  		<label style="color:black;">Select Your Role</label><br>
+
+  		<select style="height: 40px;border-radius: 10px;outline: none;background-color:#8A9A5B;color:#fff;font-weight: 500; " name="role" id="role" required>
+            <option value="">Roles.....</option>
+            <option value="Member">Team Member</option>
+            <option value="Freelancer">Freelancer</option>
+            <option value="Admin">Admin</option>
+            <option value="Client">Client</option>
+            <option value="Vendor">Vendor</option>
+            <option value="Guest">Guest</option></select>
+                  <br>
+                  <br>
+                  <select style="height: 40px; width:40%; border-radius: 10px;outline: none;background-color:#8A9A5B;color:#fff;font-weight: 500; " name="s_time" id="s_time" required>
+                    <option value="">Session time</option>
+            <option value="1">1 Hour</option>
+            <option value="2">2 Hours</option>
+            <option value="3">3 Hours</option>
+        </select>
+        <select style="height: 40px;width:40%; border-radius: 10px;outline: none;background-color:#8A9A5B;color:#fff;font-weight: 500; " name="login_type" id="login_type" required>
+            <option value="">Login Type</option>
+    <option value="Real">Real</option>
+    <option value="Learning">Learning</option>
+</select><br><br>
+     	<input type="submit" value="Go">
+      <div style="color:red;font-weight: bold;">{{context.signup}}</div>
+</form></center>
+</div>
+</body>
+</html>

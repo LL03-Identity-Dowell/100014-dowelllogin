@@ -1,0 +1,69 @@
+
+{% load i18n %}
+{% load  static %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{%static 'voc/css/style.css' %}" rel="stylesheet">
+    <title>VOC_NPS</title>
+</head>
+<body>
+    <div class="mroot">
+        <br>
+        <div class='header'>
+          Question
+        </div>
+        <div class='pre' style="padding: 5px;font-size:20px;width:90%">
+          Considering your experience with &lt;<b>Brand</b>&gt;	, how likely would you be to recommend  &lt;	<b>product</b>&gt;	 to your friend or colleague
+        </div>
+
+            <div class='bcontainer' style="width:100%;">
+                <center>
+                <button class='sbutton'>0</button>
+                <button class='sbutton'>1</button>
+                <button class='sbutton'>2</button>
+                <button class='sbutton'>3</button>
+                <button class='sbutton'>4</button>
+                <button class='sbutton'>5</button>
+                <button class='sbutton'>6</button>
+                <button class='sbutton'>7</button>
+                <button class='sbutton'>8</button>
+                <button class='sbutton'>9</button>
+                <button class='sbutton'>10</button>
+                </center>
+              </div>
+
+              <div class='butonsub' style="width:80%;">
+                <div class='ba'>Very unlikely</div>
+                <div class='bb'></div>
+                <div class='bc' style="margin-right:15%">Very likely</div>
+              </div>
+<br>
+
+        <hr
+          style="
+            color: red;
+            background-color: red;
+            height: 2;
+            width: 100%;"
+
+        />
+<br>
+        <div class='chartheader'>Report</div>
+<br>
+        <div>
+            <img src="{% static 'img/charti.png' %}" alt="chart" width="100%" height="100%">
+        </div>
+<br>
+        <div class="butcont">
+          <button class='bta' onclick="location.href = 'preview';">Privew</button>
+          <button class='btb' onclick="location.href = 'emcode';" >Create Embedding code</button>
+        </div>
+
+
+
+      </div>

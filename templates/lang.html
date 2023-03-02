@@ -1,0 +1,60 @@
+{% extends 'header.html' %}
+{% load i18n %}
+{% load  static %}
+{% block title %}
+{{title}}
+{% endblock title %}
+{% block content %}
+
+<div class="container">
+
+<div class="row justify-content-center">
+    {% get_current_language as CURRENT_L %}
+    {% get_language_info for CURRENT_L as lang1 %}
+
+    <div class="row" style="color:yellow;margin-top:20% !important">
+
+
+<!--{{lang1.name_local}}-->
+
+                <!--<form method="POST" action="{% url 'set_language' %}">-->
+                <!--    {% csrf_token %}-->
+                <!--    <input type="hidden" name="text" value="https://100014.pythonanywhere.com/direct">-->
+                <!--    <select name="language" id="select_location" onchange="this.form.submit();check();">-->
+                <!--        {% get_available_languages as L %}-->
+                <!--        {% get_language_info_list for L as ls %}-->
+                <!--        {% for lang in ls %}-->
+                <!--        <option value="{{ lang.code}}" {% if lang.code == CURRENT_L %} selected {% endif %}>-->
+                <!--            {{lang.name_local}} ({{ lang.code}})-->
+                <!--        </option>-->
+                <!--        {% endfor %}-->
+                <!--    </select>-->
+
+                <!--</form>-->
+                <form>
+                    <div class="form-group col-md-4">
+            <label for="link" class="">
+                {% trans 'Select your language' %} <span class="asterisk"> </span>
+            </label><br><center>
+                    <select name="language" id="select_location" class="form-control w-100">
+                        {% get_available_languages as L %}
+                        {% get_language_info_list for L as ls %}
+                        {% for lang in ls %}
+                        <option value="{{ lang.code}}" {% if lang.code == CURRENT_L %} selected {% endif %}>
+                            {{lang.name_local}} ({{ lang.code}})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                </form>
+                    </center></div>
+            </div>
+</div>
+<script>
+$('#select_location').on('change', function(){
+   window.location = $(this).val()+'/direct';
+});
+
+</script>
+{% endblock content %}

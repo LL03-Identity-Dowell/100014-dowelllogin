@@ -1,0 +1,4 @@
+en:
+  my:
+    title: "An incredible title"
+    content: "Hello %{name}"
