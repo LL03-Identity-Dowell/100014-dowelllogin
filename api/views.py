@@ -1,8 +1,9 @@
-import base64
+import base64,io
 from rest_framework.response import Response
 from django.contrib.sessions.models import Session
 from django.contrib.auth import authenticate, login
 from newlogin import dowell_func,qrcodegen,dowell_hash
+from newlogin.dowell_func import dowellclock
 import json
 from collections import namedtuple
 from loginapp.models import Account, CustomSession
@@ -17,9 +18,15 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.hashers import make_password
 from .serializers import UserSerializer,UserUpdateSerializer, CustomSessionSerializer
-from loginapp.event_function import event_creation
+from loginapp.event_function import event_creation, create_event
 import jwt
 from lavapp import passgen
+import time,pytz
+from dateutil import parser
+from newlogin.views import country_city_name
+from newlogin.dowell_hash import dowell_hash as dowell_hash1
+from PIL import Image
+
 dpass="d0wellre$tp@$$"
 import datetime
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -93,22 +100,96 @@ class UserUpdateView(RetrieveUpdateDestroyAPIView):
 #         return Response(serializer.data)
 @api_view(["POST"])
 def MobileView(request):
-    mdata=request.data
-    username = mdata['username']
-    password = mdata['password']
-    loc=mdata["location"]
-    device=mdata["device"]
-    osver=mdata["os"]
-    brow=mdata["browser"]
-    ltime=mdata["time"]
-    ipuser=mdata["ip"]
-    mobconn=mdata["type_of_conn"]
-    role_id=mdata["role_id"]
-    user=Account.objects.filter(username=username).first()
-    if user is None:
-        raise AuthenticationFailed("Username not Found or password not found")
-    if not user.check_password(password):
-        raise AuthenticationFailed("Incorrect password")
+    mdata=request.data.get
+    username = mdata('username')
+    password = mdata('password')
+    loc=mdata("location")
+    try:
+        lo=loc.split(" ")
+        country,city=country_city_name(lo[0],lo[1])
+    except :
+        city=""
+        country=""
+    # return Response({"city":city,"country":country,"zone":timezone_str})
+    device=mdata("device")
+    osver=mdata("os")
+    # brow=mdata["browser"]
+    ltime=mdata("time")
+    ipuser=mdata("ip")
+    zone=mdata("timezone")
+    if None in [username,password,loc,device,osver,ltime,ipuser]:
+        resp={"data":"Provide all credentials","Credentials":"username, password, location, device, os, time, ip"}
+        return Response(resp)
+    browser=mdata("browser")
+    language=mdata("language","English")
+    company=None
+    org=None
+    dept=None
+    member=None
+    project=None
+    subproject=None
+    role_res=None
+    user_id=None
+    first_name=None
+    last_name=None
+    email=None
+    phone=None
+    User_type=None
+    # role_id=mdata["role_id"]
+    user=authenticate(request, username = username, password = password)
+    if user is not None:
+        field={"Username":username,"Password":dowell_hash.dowell_hash(password)}
+        id=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","find",field,"nil")
+        response=json.loads(id)
+        if response["data"] != None:
+            login(request,user)
+            session=request.session.session_key
+            try:
+                res=create_event()
+                event_id=res['event_id']
+            except:
+                event_id=None
+            first_name=response["data"]['Firstname']
+            last_name=response["data"]['Lastname']
+            email=response["data"]['Email']
+            phone=response["data"]['Phone']
+            try:
+                User_type=response["data"]['User_type']
+                client_admin_id=response["data"]['client_admin_id']
+                user_id=response["data"]['profile_id']
+                role_res=response["data"]['Role']
+                company=response["data"]['company_id']
+                member=response["data"]['Memberof']
+                dept=response["data"]['dept_id']
+                org=response["data"]['org_id']
+                project=response["data"]['project_id']
+                subproject=response["data"]['subproject_id']
+            except:
+                pass
+            try:
+                final_ltime=parser.parse(ltime).strftime('%d %b %Y %H:%M:%S')
+                dowell_time=time.strftime("%d %b %Y %H:%M:%S", time.gmtime(dowellclock()+1609459200))
+            except:
+                final_ltime=''
+                dowell_time=''
+            serverclock=datetime.datetime.now().strftime('%d %b %Y %H:%M:%S')
+
+            field_session={'sessionID':session,'role':role_res,'username':username,'Email':email,'Phone':phone,"User_type":User_type,'language':language,'city':city,'country':country,'org':org,'company_id':company,'project':project,'subproject':subproject,'dept':dept,'Memberof':member,'status':'login','dowell_time':dowell_time,'timezone':zone,'regional_time':final_ltime,'server_time':serverclock,'userIP':ipuser,'userOS':osver,'browser':browser,'userdevice':device,'userbrowser':"",'UserID':user_id,'login_eventID':event_id,"redirect_url":"","client_admin_id":client_admin_id}
+            dowellconnection("login","bangalore","login","session","session","1121","ABCDE","insert",field_session,"nil")
+
+            info={"role":role_res,"username":username,"email":email,"phone":phone,"User_type":User_type,"language":language,"city":city,"country":country,"status":"login","dowell_time":dowell_time,"timezone":zone,"regional_time":final_ltime,"server_time":serverclock,"userIP":ipuser,"browser":browser,"userOS":osver,"userDevice":device,"userBrowser":"","userID":user_id,"login_eventID":event_id,"client_admin_id":client_admin_id}
+            info1=json.dumps(info)
+            infoo=str(info1)
+            custom_session=CustomSession.objects.create(sessionID=session,info=infoo,document="",status="login")
+
+            resp={'userinfo':info}
+            return Response(resp)
+
+        # raise AuthenticationFailed("Username not Found or password not found")
+    else:
+        resp={"data":"Username, Password combination incorrect.."}
+        return Response(resp)
+            # raise AuthenticationFailed("Incorrect password")
     # field={"Username":username}
     # try:
     # usr=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","fetch",field,"nil")
@@ -517,7 +598,8 @@ def all_users(request):
             for a in final:
                 try:
                     username=a['Username']
-                    final2.append({"member_name":username,"org_name":username})
+                    payment_status=a['payment_status']
+                    final2.append({"member_name":username,"org_name":username,"payment_status":payment_status})
                 except:
                     pass
             return Response({"data":final2})
@@ -565,7 +647,116 @@ def activeusers(request):
     final=Account.objects.filter(id__in=user_id_list).values_list('username')
     return Response({"msg":"API working","data":final})
 
+@api_view(['POST'])
+def password_change(request):
+    username=request.data.get("username")
+    old_password=request.data.get("old_password")
+    new_password=request.data.get("new_password")
+    obj=authenticate(request, username = username, password = old_password)
+    if None in [username,old_password,new_password]:
+        response={'data':'Please provide all fields'}
+        return Response(response)
+    if obj is not None:
+        print("ok")
+        try:
+            obj.set_password(new_password)
+            obj.save()
+            field={'Username':username}
+            up_field={'Password':dowell_hash1(new_password)}
+            dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","update",field,up_field)
+            response={'data':'Password Changed successfully..'}
+            return Response(response)
+        except Exception as e:
+            response={'data':'Error','error':e}
+            return Response(response)
+    else:
+        response={'data':'Username, Password combination incorrect'}
+        return Response(response)
 
+@api_view(['POST'])
+def profile_update(request):
+    username=request.data.get("username")
+    Firstname=request.data.get("first_name")
+    Lastname=request.data.get("last_name")
+    Email=request.data.get("email")
+    Phone=request.data.get("phone")
+    User_type=request.data.get("user_type")
+    Profile_Image=request.data.get("image")
+    obj=Account.objects.filter(username=username).first()
+    field={"Username":username}
+    client_admin=dowellconnection("login","bangalore","login","client_admin","client_admin","1159","ABCDE","fetch",field,"nil")
+    data2=json.loads(client_admin)
+    data1=data2["data"][0]
+    up_field={}
+    update_fields=[]
+    from django.core.files.base import ContentFile
+    import os
+    if Profile_Image is not None:
+        img = Image.open(io.BytesIO(base64.decodebytes(bytes(Profile_Image, "utf-8"))))
+        if obj.profile_image == "":
+            img.save(f"dowell_login/static/img/api_upload/{username}.png")
+            im = Image.open(f"dowell_login/static/img/api_upload/{username}.png")
+            thumb_io = io.BytesIO()
+            im.save(thumb_io, im.format, quality=60)
+            obj.profile_image.save(im.filename,ContentFile(thumb_io.getvalue()), save=False )
+            try:
+                os.remove(f"dowell_login/static/img/api_upload/{username}.png")
+            except:
+                pass
+            obj.save()
+            up_field["Profile_Image"]=f"https://100014.pythonanywhere.com/media/{obj.profile_image}"
+            update_data1={"profile_img":f"https://100014.pythonanywhere.com/media/{obj.profile_image}"}
+            data1["profile_info"].update(update_data1)
+        else:
+            img.save(f"dowell_login/media/{obj.profile_image}")
+    if Firstname is not None:
+        obj.first_name=Firstname
+        update_fields.append("first_name")
+        up_field["Firstname"]=Firstname
+        update_data1={"first_name":Firstname}
+        data1["profile_info"].update(update_data1)
+        update_data2={"first_name":Firstname}
+        data1["members"]["team_members"]["accept_members"][0].update(update_data2)
+    if Lastname is not None:
+        obj.last_name=Lastname
+        update_fields.append("last_name")
+        up_field["Lastname"]=Lastname
+        update_data1={"first_name":Lastname}
+        data1["profile_info"].update(update_data1)
+        update_data2={"last_name":Lastname}
+        data1["members"]["team_members"]["accept_members"][0].update(update_data2)
+    if Email is not None:
+        obj.email=Email
+        update_fields.append("email")
+        up_field["Email"]=Email
+        update_data1={"email":Email}
+        data1["profile_info"].update(update_data1)
+        update_data2={"email":Email}
+        data1["members"]["team_members"]["accept_members"][0].update(update_data2)
+    if Phone is not None:
+        obj.phone=Phone
+        update_fields.append("phone")
+        up_field["Phone"]=Phone
+        update_data1={"phone":Phone}
+        data1["profile_info"].update(update_data1)
+    if User_type is not None:
+        up_field["User_type"]=User_type
+    final_data1=data1.pop("_id")
+    if update_fields !=[]:
+        obj.save(update_fields=update_fields)
+    client_admin=dowellconnection("login","bangalore","login","client_admin","client_admin","1159","ABCDE","update",{"Username":username},data1)
+
+    # def namestr(obj, namespace):
+    #     return [name for name in namespace if namespace[name] is obj]
+    # up_field={}
+    # for a in [Firstname,Lastname,Email,Phone]:
+    #     if a is not None:
+    #         up_field[namestr(a,globals())[0]]=a
+    if up_field != {}:
+        dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","update",{"Username":username},up_field)
+
+    response={"data":"Updated successfully.."}
+    return Response(response)
 
 
 

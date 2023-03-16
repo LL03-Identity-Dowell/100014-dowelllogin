@@ -418,7 +418,7 @@ def RegisterPage(request):
             except:
                 pass
 
-            field={"Profile_Image":f'https://100014.pythonanywhere.com/media/{profile_image}',"Username":user,"Password":dowell_hash(password1),"Firstname":first,"Lastname":last,"Email":email,"phonecode":phonecode,"Phone":phone,"profile_id":profile_id,'org_id':[],"company_id":"",'project_id':[],'subproject_id':[],'dept_id':[],'Memberof':{},'client_admin_id':client_admin_res['inserted_id'],'Policy_status':policy_status,'User_type':user_type,'eventId':event_id}
+            field={"Profile_Image":f"https://100014.pythonanywhere.com/media/{profile_image}","Username":user,"Password":dowell_hash(password1),"Firstname":first,"Lastname":last,"Email":email,"phonecode":phonecode,"Phone":phone,"profile_id":profile_id,'org_id':[],"company_id":"","project_id":[],"subproject_id":[],"dept_id":[],"Memberof":{},"client_admin_id":client_admin_res["inserted_id"],"Policy_status":policy_status,"User_type":user_type,"eventId":event_id,"payment_status":"unpaid"}
             #field={"Username":user,"Password":password,"Firstname":first,"Lastname":last,"Email":email,"Role":role,"Team_Code":ccode,"phonecode":phonecode,"Phone":phone,"user_id":"userid"}
             id=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","insert",field,"nil")
             # htmlgen_final = f'Dear {user}, <br> A dowell account with following credentials was created:<br><h3><ul><li>First Name: {first}</li><li>Last Name: {last}</li><li>Username: {user}</li><li>Phone Number: {phonecode} {phone}</li></ul></h3>'
@@ -432,7 +432,7 @@ def RegisterPage(request):
                htmlgen_final,
                settings.EMAIL_HOST_USER,
                to = [email],
-               bcc=['customersupport@dowellresearch.sg']
+               bcc=['customersupport@dowellresearch.sg', 'dowell@dowellresearch.uk']
             )
             email.content_subtype="html"
             email.send()
@@ -641,6 +641,7 @@ def LoginPage(request):
             country,city=country_city_name(lo[0],lo[1])
         except Exception as e:
             city=""
+            country=""
         language=request.POST.get("language","en-us")
         device=request.POST.get("dev","")
         osver=request.POST.get("os","")
@@ -650,7 +651,7 @@ def LoginPage(request):
         mobconn=request.POST["conn"]
 
         user = authenticate(request, username = username, password = password)
-
+        print(user)
         if user is not None:
             form = login(request, user)
             context["username"]=username
@@ -686,6 +687,7 @@ def LoginPage(request):
             email=None
             phone=None
             User_type=None
+            payment_status=None
             client_admin_id=""
             field={"Username":username}
             id=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","find",field,"nil")
@@ -705,6 +707,7 @@ def LoginPage(request):
                     User_type=response["data"]['User_type']
                     client_admin_id=response["data"]['client_admin_id']
                     user_id=response["data"]['profile_id']
+                    payment_status=response["data"]['payment_status']
                     role_res=response["data"]['Role']
                     company=response["data"]['company_id']
                     member=response["data"]['Memberof']
@@ -723,7 +726,7 @@ def LoginPage(request):
                 dowell_time=''
             serverclock=datetime.datetime.now().strftime('%d %b %Y %H:%M:%S')
 
-            field_session={'sessionID':session,'role':role_res,'username':username,'Email':email,'Phone':phone,"User_type":User_type,'language':language,'city':city,'country':country,'org':org,'company_id':company,'project':project,'subproject':subproject,'dept':dept,'Memberof':member,'status':'login','dowell_time':dowell_time,'timezone':zone,'regional_time':final_ltime,'server_time':serverclock,'userIP':ipuser,'userOS':osver,'userdevice':device,'userbrowser':brow,'UserID':user_id,'login_eventID':event_id,"redirect_url":redirect_url,"client_admin_id":client_admin_id}
+            field_session={'sessionID':session,'role':role_res,'username':username,'Email':email,'Phone':phone,"User_type":User_type,'language':language,'city':city,'country':country,'org':org,'company_id':company,'project':project,'subproject':subproject,'dept':dept,'Memberof':member,'status':'login','dowell_time':dowell_time,'timezone':zone,'regional_time':final_ltime,'server_time':serverclock,'userIP':ipuser,'userOS':osver,'userdevice':device,'userbrowser':brow,'UserID':user_id,'login_eventID':event_id,"redirect_url":redirect_url,"client_admin_id":client_admin_id,"payment_status":payment_status}
             dowellconnection("login","bangalore","login","session","session","1121","ABCDE","insert",field_session,"nil")
             try:
                 obj.current_task="Connecting to UX Living Lab"
@@ -731,7 +734,7 @@ def LoginPage(request):
             except:
                 pass
 
-            info={"role":role_res,"username":username,"email":email,"phone":phone,"User_type":User_type,"language":language,"city":city,"country":country,"status":"login","dowell_time":dowell_time,"timezone":zone,"regional_time":final_ltime,"server_time":serverclock,"userIP":ipuser,"userOS":osver,"userDevice":device,"userBrowser":brow,"language":language,"userID":user_id,"login_eventID":event_id,"client_admin_id":client_admin_id}
+            info={"role":role_res,"username":username,"email":email,"phone":phone,"User_type":User_type,"language":language,"city":city,"country":country,"status":"login","dowell_time":dowell_time,"timezone":zone,"regional_time":final_ltime,"server_time":serverclock,"userIP":ipuser,"userOS":osver,"userDevice":device,"userBrowser":brow,"language":language,"userID":user_id,"login_eventID":event_id,"client_admin_id":client_admin_id,"payment_status":payment_status}
             info1=json.dumps(info)
             infoo=str(info1)
             custom_session=CustomSession.objects.create(sessionID=session,info=infoo,document="",status="login")
