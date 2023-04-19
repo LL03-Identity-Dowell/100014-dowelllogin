@@ -26,6 +26,7 @@ SECRET_KEY = 'm0k1*n#$l!vku4s&e00rg^p61^((dyh4+vme7^cwxqbsyywjk!'
 DEBUG = True
 
 ALLOWED_HOSTS = ['100014.pythonanywhere.com']
+#ALLOWED_HOSTS = ['*']
 
 ENCRYPT_KEY="l6h8C92XGJmQ_aXpPN7_VUMzA8LS8Bg50A83KNcrVhQ="
 # Application definition

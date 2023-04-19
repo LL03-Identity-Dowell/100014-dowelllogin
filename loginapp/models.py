@@ -43,6 +43,12 @@ class GuestAccount(models.Model):
     class Meta:
         db_table="GuestAccount"
 
+class mobile_sms(models.Model):
+    username=models.CharField(max_length=20,default="user")
+    phone=models.CharField(max_length=15,unique=True)
+    sms=models.IntegerField(null=True)
+    expiry=models.DateTimeField(default=timezone.now)
+
 class logos(models.Model):
     url=models.CharField(max_length=1000)
     logo=models.CharField(max_length=200)

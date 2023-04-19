@@ -26,6 +26,8 @@ from dateutil import parser
 from newlogin.views import country_city_name
 from newlogin.dowell_hash import dowell_hash as dowell_hash1
 from PIL import Image
+from django.core.files.base import ContentFile
+import os
 
 dpass="d0wellre$tp@$$"
 import datetime
@@ -138,12 +140,24 @@ def MobileView(request):
     # role_id=mdata["role_id"]
     user=authenticate(request, username = username, password = password)
     if user is not None:
-        field={"Username":username,"Password":dowell_hash.dowell_hash(password)}
+        field={"Username":username}
         id=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","find",field,"nil")
         response=json.loads(id)
         if response["data"] != None:
-            login(request,user)
-            session=request.session.session_key
+            form=login(request,user)
+            # try:
+            #     if request.session.session_key:
+            #         print("OK")
+            #         resp={'session_id':request.session.session_key}
+            #         return Response(resp)
+            # except:
+            #     pass
+            request.session.save()
+            session= request.session.session_key
+            if CustomSession.objects.filter(sessionID=session).exists() :
+                print("OK")
+                resp={'session_id':session}
+                return Response(resp)
             try:
                 res=create_event()
                 event_id=res['event_id']
@@ -182,9 +196,12 @@ def MobileView(request):
             infoo=str(info1)
             custom_session=CustomSession.objects.create(sessionID=session,info=infoo,document="",status="login")
 
-            resp={'userinfo':info}
+            #resp={'userinfo':info}
+            resp={'session_id':session}
             return Response(resp)
-
+        else:
+            resp={"data":"Username not found in database"}
+            return Response(resp)
         # raise AuthenticationFailed("Username not Found or password not found")
     else:
         resp={"data":"Username, Password combination incorrect.."}
@@ -199,18 +216,18 @@ def MobileView(request):
     #     usr=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","insert",field,"nil")
     # for i in r["data"]:
     #     username=i["Username"]
-    payload={
-        'id':user.username,
-        'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=60),
-        'iat':datetime.datetime.utcnow()
-        }
-    token=jwt.encode(payload,'dowell_secret',algorithm='HS256').decode('utf-8')
-    response=Response()
-    response.set_cookie(key="jwt", value=token)
-    response.data={
-        'jwt':token
-        }
-    return response
+    # payload={
+    #     'id':user.username,
+    #     'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=60),
+    #     'iat':datetime.datetime.utcnow()
+    #     }
+    # token=jwt.encode(payload,'dowell_secret',algorithm='HS256').decode('utf-8')
+    # response=Response()
+    # response.set_cookie(key="jwt", value=token)
+    # response.data={
+    #     'jwt':token
+    #     }
+    # return response
 
         # i["id"] = i.pop("_id")
         # usr_obj = namedtuple("Users", i.keys())(*i.values())
@@ -522,11 +539,14 @@ def new_userinfo(request):
     if request.method == 'POST':
         session=request.data["session_id"]
         product=request.data.get("product",None)
-        mydata=CustomSession.objects.get(sessionID=session)
+        mydata=CustomSession.objects.filter(sessionID=session).first()
+        if not mydata:
+            return Response({"message":"SessionID not found in database, Please check and try again!!"})
         if mydata.status != "login":
             return Response({"message":"You are logged out, Please login and try again!!"})
         var1=mydata.info
         var2=json.loads(var1)
+        var2["org_img"]="https://100093.pythonanywhere.com/static/clientadmin/img/logomissing.png"
 
         del_keys=["role","company_id","org","project","subproject","dept","Memberof","members"]
         for key in del_keys:
@@ -567,8 +587,10 @@ def new_userinfo(request):
             except:
                 pass
         try:
-            var3[0]["org_id"]=details_res["data"][0]["_id"]
-            var3[0]["org_name"]=details_res["data"][0]["document_name"]
+            var2["client_admin_id"]=details_res["data"][0]["_id"]
+            for r in var3:
+                r["org_id"]=details_res["data"][0]["_id"]
+                r["org_name"]=details_res["data"][0]["document_name"]
         except:
             pass
         organisations=details_res["data"][0]['organisations'][0]["org_name"]
@@ -675,22 +697,30 @@ def password_change(request):
 
 @api_view(['POST'])
 def profile_update(request):
+    address=request.data.get("address")
+    zip_code=request.data.get("zip_code")
+    user_city=request.data.get("city")
+    user_location=request.data.get("location")
+    user_country=request.data.get("country")
+    native_language=request.data.get("native_language")
+    nationality=request.data.get("nationality")
+    language_preferences=request.data.get("language_preferences")
+    vision=request.data.get("vision")
     username=request.data.get("username")
     Firstname=request.data.get("first_name")
     Lastname=request.data.get("last_name")
     Email=request.data.get("email")
     Phone=request.data.get("phone")
-    User_type=request.data.get("user_type")
+    #User_type=request.data.get("user_type")
     Profile_Image=request.data.get("image")
     obj=Account.objects.filter(username=username).first()
-    field={"Username":username}
+    field={"document_name":username}
     client_admin=dowellconnection("login","bangalore","login","client_admin","client_admin","1159","ABCDE","fetch",field,"nil")
     data2=json.loads(client_admin)
+    print(data2)
     data1=data2["data"][0]
     up_field={}
     update_fields=[]
-    from django.core.files.base import ContentFile
-    import os
     if Profile_Image is not None:
         img = Image.open(io.BytesIO(base64.decodebytes(bytes(Profile_Image, "utf-8"))))
         if obj.profile_image == "":
@@ -715,36 +745,53 @@ def profile_update(request):
         up_field["Firstname"]=Firstname
         update_data1={"first_name":Firstname}
         data1["profile_info"].update(update_data1)
-        update_data2={"first_name":Firstname}
-        data1["members"]["team_members"]["accept_members"][0].update(update_data2)
+        # update_data2={"first_name":Firstname}
+        # data1["members"]["team_members"]["accept_members"][0].update(update_data2)
     if Lastname is not None:
         obj.last_name=Lastname
         update_fields.append("last_name")
         up_field["Lastname"]=Lastname
-        update_data1={"first_name":Lastname}
+        update_data1={"last_name":Lastname}
         data1["profile_info"].update(update_data1)
-        update_data2={"last_name":Lastname}
-        data1["members"]["team_members"]["accept_members"][0].update(update_data2)
+        # update_data2={"last_name":Lastname}
+        # data1["members"]["team_members"]["accept_members"][0].update(update_data2)
     if Email is not None:
         obj.email=Email
         update_fields.append("email")
         up_field["Email"]=Email
         update_data1={"email":Email}
         data1["profile_info"].update(update_data1)
-        update_data2={"email":Email}
-        data1["members"]["team_members"]["accept_members"][0].update(update_data2)
+        # update_data2={"email":Email}
+        # data1["members"]["team_members"]["accept_members"][0].update(update_data2)
     if Phone is not None:
         obj.phone=Phone
         update_fields.append("phone")
         up_field["Phone"]=Phone
         update_data1={"phone":Phone}
         data1["profile_info"].update(update_data1)
-    if User_type is not None:
-        up_field["User_type"]=User_type
+    if address is not None:
+        up_field["address"]=address
+    if zip_code is not None:
+        up_field["zip_code"]=zip_code
+    if user_city is not None:
+        up_field["user_city"]=user_city
+    if user_location is not None:
+        up_field["user_location"]=user_location
+    if user_country is not None:
+        up_field["user_country"]=user_country
+    if native_language is not None:
+        up_field["native_language"]=native_language
+    if nationality is not None:
+        up_field["nationality"]=nationality
+    if language_preferences is not None:
+        up_field["language_preferences"]=language_preferences
+    if vision is not None:
+        up_field["vision"]=vision
+
     final_data1=data1.pop("_id")
     if update_fields !=[]:
         obj.save(update_fields=update_fields)
-    client_admin=dowellconnection("login","bangalore","login","client_admin","client_admin","1159","ABCDE","update",{"Username":username},data1)
+    client_admin=dowellconnection("login","bangalore","login","client_admin","client_admin","1159","ABCDE","update",{"document_name":username},{'profile_info':data1["profile_info"]})
 
     # def namestr(obj, namespace):
     #     return [name for name in namespace if namespace[name] is obj]
@@ -757,6 +804,22 @@ def profile_update(request):
 
     response={"data":"Updated successfully.."}
     return Response(response)
+
+@api_view(['POST'])
+def profile_view(request):
+    username=request.data.get("username")
+    password=request.data.get("password")
+    obj="OK"
+    # obj=authenticate(request, username = username, password = password)
+    if obj is not None:
+        resp=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","find",{"Username":username},"nil")
+        resp1=json.loads(resp)
+        if resp1["data"] != None:
+            return Response(resp1["data"])
+        else:
+            return Response({"Error":"Credentials wrong1"})
+    else:
+        return Response({"Error":"Credentials wrong"})
 
 
 

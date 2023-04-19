@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .models import Account
-from .models import GuestAccount
+from .models import GuestAccount, mobile_sms
 class CustomUserAdmin(UserAdmin):
     list_display = (
         'username', 'email', 'first_name', 'last_name', 'is_staff',
@@ -54,4 +54,4 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(Account, CustomUserAdmin)
 admin.site.register(GuestAccount)
-
+admin.site.register(mobile_sms)

@@ -311,7 +311,7 @@ def GuestVerify(request):
 def RegisterPage(request):
     otp_user=generateOTP()
     context={}
-    orgs=None
+    # orgs=None
     type1=None
     # For countrycode
     URL='https://100074.pythonanywhere.com/countries/johnDoe123/haikalsb1234/100074/'
@@ -320,37 +320,114 @@ def RegisterPage(request):
     for a in r.json():
         mylist=["+"+a["country_code"],a["country_short"]+"(+"+a["country_code"]+")"]
         finallist.append(mylist)
-    # orgs=request.GET.get("org",None)
-    url=request.GET.get("redirect_url",None)
+    orgs=request.GET.get("org",None)
+    # url=request.GET.get("redirect_url",None)
     if is_ajax(request=request):
-        user=request.POST.get('username',"User")
-        email_ajax=request.POST.get('email',None)
-        time=datetime.datetime.now()
-        try:
-            emailexist = models.GuestAccount.objects.get(email=email_ajax)
-        except models.GuestAccount.DoesNotExist:
-            emailexist = None
-        if emailexist is not None:
-            models.GuestAccount.objects.filter(email=email_ajax).update(otp=otp_user,expiry=time,username=user)
-            htmlgen = f'Dear {user}, <br> Please Enter below <strong>OTP</strong> to create your dowell account <br><h2>Your OTP is <strong>{otp_user}</strong></h2><br>Note: This OTP is valid for the next 2 hours only.'
-            send_mail('Your OTP for creating your Dowell account',otp_user,settings.EMAIL_HOST_USER,[email_ajax], fail_silently=False, html_message=htmlgen)
-            response = {}
-            return JsonResponse(response)
+        if request.POST.get('form')=='verify_otp':
+            otp=request.POST.get('otp')
+            email=request.POST.get('email')
+            try:
+                valid = models.GuestAccount.objects.get(otp=otp,email=email)
+            except models.GuestAccount.DoesNotExist:
+                valid=None
+            if valid:
+                return JsonResponse({'verified':'True'})
+            else:
+                return JsonResponse({'verified':'False'})
+        elif request.POST.get('form')=='mobileotp':
+            sms=generateOTP()
+            code=request.POST.get("phonecode")
+            phone=request.POST.get("phone")
+            full_number=code+phone
+            time=datetime.datetime.now()
+            try:
+                phone_exists = models.mobile_sms.objects.get(phone=full_number)
+            except models.mobile_sms.DoesNotExist:
+                phone_exists = None
+            if phone_exists is not None:
+                models.mobile_sms.objects.filter(phone=full_number).update(sms=sms,expiry=time)
+            else:
+                models.mobile_sms.objects.create(phone=full_number,sms=sms,expiry=time)
+            url = "https://100085.pythonanywhere.com/api/sms/"
+            payload = {
+                "sender" : "DowellLogin",
+                "recipient" : full_number,
+                "content" : f"Enter the following OTP to create your dowell account: {sms}",
+                "created_by" : "Manish"
+                }
+            response = requests.request("POST", url, data=payload)
+            # resp=json.loads(response)
+            if len(response.json())>1:
+                return JsonResponse({'msg':'SMS sent successfully!!'})
+            else:
+                return JsonResponse({'msg':'error'})
+        elif request.POST.get('form')=='verify_sms':
+            code=request.POST.get("phonecode")
+            phone=request.POST.get("phone")
+            sms=request.POST.get("sms")
+            full_number=code+phone
+            try:
+                valid = models.mobile_sms.objects.get(sms=sms,phone=full_number)
+            except models.mobile_sms.DoesNotExist:
+                valid=None
+            if valid:
+                return JsonResponse({'verified':'True'})
+            else:
+                return JsonResponse({'verified':'False'})
         else:
-            insertdata=models.GuestAccount(username=user,email=email_ajax,otp=otp_user)
-            insertdata.save()
-            htmlgen = f'Dear {user}, <br> Please Enter below <strong>OTP</strong> to create account <br><h2>Your OTP is <strong>{otp_user}</strong></h2><br>Note: This OTP is valid for the next 2 hours only.'
-            send_mail('Your OTP for creating your Dowell account',otp_user,settings.EMAIL_HOST_USER,[email_ajax], fail_silently=False, html_message=htmlgen)
-            response = {}
-            return JsonResponse(response)
+            user=request.POST.get('username',"User")
+            email_ajax=request.POST.get('email',None)
+            time=datetime.datetime.now()
+            try:
+                emailexist = models.GuestAccount.objects.get(email=email_ajax)
+            except models.GuestAccount.DoesNotExist:
+                emailexist = None
+            if emailexist is not None:
+                models.GuestAccount.objects.filter(email=email_ajax).update(otp=otp_user,expiry=time,username=user)
+                url = "https://100085.pythonanywhere.com/api/signUp-otp-verification/"
+                payload = json.dumps({
+                    "toEmail":email_ajax,
+                    "toName":user,
+                    "topic":"RegisterOtp",
+                    "otp":otp_user
+                    })
+                headers = {
+                    'Content-Type': 'application/json'
+                    }
+                response1 = requests.request("POST", url, headers=headers, data=payload)
+                # htmlgen = f'Dear {user}, <br> Please Enter below <strong>OTP</strong> to create your dowell account <br><h2>Your OTP is <strong>{otp_user}</strong></h2><br>Note: This OTP is valid for the next 2 hours only.'
+                # send_mail('Your OTP for creating your Dowell account',otp_user,settings.EMAIL_HOST_USER,[email_ajax], fail_silently=False, html_message=htmlgen)
+                response = {}
+                return JsonResponse(response)
+            else:
+                insertdata=models.GuestAccount(username=user,email=email_ajax,otp=otp_user)
+                insertdata.save()
+                url = "https://100085.pythonanywhere.com/api/signUp-otp-verification/"
+                payload = json.dumps({
+                    "toEmail":email_ajax,
+                    "toName":user,
+                    "topic":"RegisterOtp",
+                    "otp":otp_user
+                    })
+                headers = {
+                    'Content-Type': 'application/json'
+                    }
+                response1 = requests.request("POST", url, headers=headers, data=payload)
+                # htmlgen = f'Dear {user}, <br> Please Enter below <strong>OTP</strong> to create account <br><h2>Your OTP is <strong>{otp_user}</strong></h2><br>Note: This OTP is valid for the next 2 hours only.'
+                # send_mail('Your OTP for creating your Dowell account',otp_user,settings.EMAIL_HOST_USER,[email_ajax], fail_silently=False, html_message=htmlgen)
+                response = {}
+                return JsonResponse(response)
 
     if request.method == 'POST':
+        valid=request.POST.get('otp_status',None)
         mainparams=request.POST.get('mainparams',None)
         type1=request.POST.get('type',None)
         otp=request.POST.get('otp')
         org=request.POST.get('org',None)
         form = forms.UserRegisterForm(request.POST,request.FILES)
         policy_status=request.POST.get('policy_status')
+        other_policy=request.POST.get('other_policy')
+        newsletter=request.POST.get('newsletter')
         user = request.POST['username']
         password1 = request.POST['password1']
         password2 = request.POST['password2']
@@ -360,19 +437,23 @@ def RegisterPage(request):
         phonecode=request.POST["phonecode"]
         phone = request.POST['phone']
         user_type=request.POST.get('user_type')
+        user_country=request.POST.get('user_country')
         role1="guest"
         img=request.FILES.get("profile_image",None)
         name=""
+        # if other_policy !="Accepted":
+        #     context["error"]="Safety and Security policy not accepted.."
+        #     return render(request, "login/new_register.html", context)
         if policy_status !="Accepted":
             context["error"]="Policy not accepted.."
             return render(request, "login/new_register.html", context)
         if password1 != password2:
             context["error"]="Passwords Not Matching.."
             return render(request, "login/new_register.html", context)
-        try:
-            valid = models.GuestAccount.objects.get(otp=otp,email=email)
-        except models.GuestAccount.DoesNotExist:
-            valid=None
+        # try:
+        #     valid = models.GuestAccount.objects.get(otp=otp,email=email)
+        # except models.GuestAccount.DoesNotExist:
+        #     valid=None
         if valid is not None:
             try:
                 ro=Account.objects.filter(email=email)#.update(password = password,first_name = first,last_name = last,email = email,role = role,teamcode = ccode,phonecode=phonecode,phone = phone,profile_image=img)
@@ -386,8 +467,10 @@ def RegisterPage(request):
             context["error"]="Wrong OTP!!"
             return render(request, "login/new_register.html", context)
         if name is not None:
-
-            new_user=Account.objects.create(email=email,username=user,password=make_password(password1),first_name = first,last_name = last,phonecode=phonecode,phone = phone,profile_image=img)
+            if img:
+                new_user=Account.objects.create(email=email,username=user,password=make_password(password1),first_name = first,last_name = last,phonecode=phonecode,phone = phone,profile_image=img)
+            else:
+                new_user=Account.objects.create(email=email,username=user,password=make_password(password1),first_name = first,last_name = last,phonecode=phonecode,phone = phone)
             profile_image=new_user.profile_image
             json_data = open('dowell_login/static/newnaga2.json')
             data1 = json.load(json_data)
@@ -401,6 +484,7 @@ def RegisterPage(request):
             data1["members"]["team_members"]["accept_members"][0].update(update_data2)
             client_admin=dowellconnection("login","bangalore","login","client_admin","client_admin","1159","ABCDE","insert",data1,"nil")
             client_admin_res=json.loads(client_admin)
+            org_id=client_admin_res["inserted_id"]
 
             userfield={}
             userresp=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","fetch",userfield,"nil")
@@ -418,28 +502,27 @@ def RegisterPage(request):
             except:
                 pass
 
-            field={"Profile_Image":f"https://100014.pythonanywhere.com/media/{profile_image}","Username":user,"Password":dowell_hash(password1),"Firstname":first,"Lastname":last,"Email":email,"phonecode":phonecode,"Phone":phone,"profile_id":profile_id,'org_id':[],"company_id":"","project_id":[],"subproject_id":[],"dept_id":[],"Memberof":{},"client_admin_id":client_admin_res["inserted_id"],"Policy_status":policy_status,"User_type":user_type,"eventId":event_id,"payment_status":"unpaid"}
+            field={"Profile_Image":f"https://100014.pythonanywhere.com/media/{profile_image}","Username":user,"Password":dowell_hash(password1),"Firstname":first,"Lastname":last,"Email":email,"phonecode":phonecode,"Phone":phone,"profile_id":profile_id,"client_admin_id":client_admin_res["inserted_id"],"Policy_status":policy_status,"User_type":user_type,"eventId":event_id,"payment_status":"unpaid","safety_security_policy":other_policy,"user_country":user_country,"newsletter_subscription":newsletter}
             #field={"Username":user,"Password":password,"Firstname":first,"Lastname":last,"Email":email,"Role":role,"Team_Code":ccode,"phonecode":phonecode,"Phone":phone,"user_id":"userid"}
             id=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","insert",field,"nil")
-            # htmlgen_final = f'Dear {user}, <br> A dowell account with following credentials was created:<br><h3><ul><li>First Name: {first}</li><li>Last Name: {last}</li><li>Username: {user}</li><li>Phone Number: {phonecode} {phone}</li></ul></h3>'
 
-            htmlgen_final = f'Hi {first} {last}, <br> Welcome to UX Living Lab. Your new account details are,<br><h3><ul><li>Firstname: {first}</li><li>Lastname: {last}</li><li>Username: {user}</li><li>Phone Number: {phonecode} {phone}</li><li>Email: {email}</li></ul></h3><br>Login to UX Living Lab to use your workspace. Watch this video to learn more.<br>https://youtube.com/playlist?list=PLa-BPmUzAKKfVgomvrIsWd9ZGQFTiT0Xb<br><strong>Thank You</strong><br>UX Living Lab'
-
-            connection=get_connection()
-            connection.open()
-            email=EmailMessage(
-               'A Dowell account was created',
-               htmlgen_final,
-               settings.EMAIL_HOST_USER,
-               to = [email],
-               bcc=['customersupport@dowellresearch.sg', 'dowell@dowellresearch.uk']
-            )
-            email.content_subtype="html"
-            email.send()
-            connection.close()
-
-
-            # send_mail('A Dowell account was created','A Dowell account was created',settings.EMAIL_HOST_USER,[email], fail_silently=False, html_message=htmlgen_final)
+            url = "https://100085.pythonanywhere.com/api/signup-feedback/"
+            payload = json.dumps({
+                "topic" : "Signupfeedback",
+                "toEmail" : email,
+                "toName" : first +" "+ last,
+                "firstname" : first,
+                "lastname" : last,
+                "username" : user,
+                "phoneCode" : phonecode,
+                "phoneNumber" : phone,
+                "usertype" : user_type,
+                "country" : user_country
+                    })
+            headers = {
+                'Content-Type': 'application/json'
+                }
+            response1 = requests.request("POST", url, headers=headers, data=payload)
 
             # field_owner={'owner':username}
             # usr=dowellconnection("login","bangalore","login","company","company","1083","ABCDE","fetch",field_owner,"nil")
@@ -449,12 +532,10 @@ def RegisterPage(request):
             #     a.append(username)
             #     update_company={'members':a}
             #     dowellconnection("login","bangalore","login","company","company","1083","ABCDE","update",field_owner,update_company)
-            if org!="None":
+            if org != "None":
                 return redirect(f'https://100014.pythonanywhere.com/?{mainparams}')
-            if url is not None:
-                return redirect(f'/?redirect_url={url}')
             else:
-                return redirect("/")
+                return render(request,'login/after_register.html',{'user':user})
         else:
 
             return HttpResponse("check")
@@ -495,6 +576,7 @@ def RegisterPage(request):
         form = forms.UserRegisterForm()
     #return render(request, 'user/register.html', {'form': form, 'title':'reqister here'})
     return render(request,'login/new_register.html',{'form': form, 'title':'reqister here','country_resp':finallist,'org':orgs,'type':type1})
+
 
 @method_decorator(xframe_options_exempt, name='dispatch')
 @csrf_exempt
@@ -688,6 +770,11 @@ def LoginPage(request):
             phone=None
             User_type=None
             payment_status=None
+            newsletter=None
+            user_country=None
+            privacy_policy=None
+            other_policy=None
+            profile_image="https://100014.pythonanywhere.com/media/user.png"
             client_admin_id=""
             field={"Username":username}
             id=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","find",field,"nil")
@@ -704,10 +791,18 @@ def LoginPage(request):
                 email=response["data"]['Email']
                 phone=response["data"]['Phone']
                 try:
+                    if response["data"]['Profile_Image'] =="https://100014.pythonanywhere.com/media/":
+                        profile_image="https://100014.pythonanywhere.com/media/user.png"
+                    else:
+                        profile_image=response["data"]['Profile_Image']
                     User_type=response["data"]['User_type']
                     client_admin_id=response["data"]['client_admin_id']
                     user_id=response["data"]['profile_id']
                     payment_status=response["data"]['payment_status']
+                    newsletter=response["data"]['newsletter_subscription']
+                    user_country=response["data"]['user_country']
+                    privacy_policy=response["data"]['Policy_status']
+                    other_policy=response["data"]['safety_security_policy']
                     role_res=response["data"]['Role']
                     company=response["data"]['company_id']
                     member=response["data"]['Memberof']
@@ -726,7 +821,7 @@ def LoginPage(request):
                 dowell_time=''
             serverclock=datetime.datetime.now().strftime('%d %b %Y %H:%M:%S')
 
-            field_session={'sessionID':session,'role':role_res,'username':username,'Email':email,'Phone':phone,"User_type":User_type,'language':language,'city':city,'country':country,'org':org,'company_id':company,'project':project,'subproject':subproject,'dept':dept,'Memberof':member,'status':'login','dowell_time':dowell_time,'timezone':zone,'regional_time':final_ltime,'server_time':serverclock,'userIP':ipuser,'userOS':osver,'userdevice':device,'userbrowser':brow,'UserID':user_id,'login_eventID':event_id,"redirect_url":redirect_url,"client_admin_id":client_admin_id,"payment_status":payment_status}
+            field_session={'sessionID':session,'role':role_res,'username':username,'Email':email,'profile_img':profile_image,'Phone':phone,"User_type":User_type,'language':language,'city':city,'country':country,'org':org,'company_id':company,'project':project,'subproject':subproject,'dept':dept,'Memberof':member,'status':'login','dowell_time':dowell_time,'timezone':zone,'regional_time':final_ltime,'server_time':serverclock,'userIP':ipuser,'userOS':osver,'userdevice':device,'userbrowser':brow,'UserID':user_id,'login_eventID':event_id,"redirect_url":redirect_url,"client_admin_id":client_admin_id,"payment_status":payment_status,"user_country":user_country,"newsletter_subscription":newsletter,"Privacy_policy":privacy_policy,"Safety,Security_policy":other_policy}
             dowellconnection("login","bangalore","login","session","session","1121","ABCDE","insert",field_session,"nil")
             try:
                 obj.current_task="Connecting to UX Living Lab"
@@ -734,14 +829,20 @@ def LoginPage(request):
             except:
                 pass
 
-            info={"role":role_res,"username":username,"email":email,"phone":phone,"User_type":User_type,"language":language,"city":city,"country":country,"status":"login","dowell_time":dowell_time,"timezone":zone,"regional_time":final_ltime,"server_time":serverclock,"userIP":ipuser,"userOS":osver,"userDevice":device,"userBrowser":brow,"language":language,"userID":user_id,"login_eventID":event_id,"client_admin_id":client_admin_id,"payment_status":payment_status}
+            info={"role":role_res,"username":username,"email":email,"profile_img":profile_image,"phone":phone,"User_type":User_type,"language":language,"city":city,"country":country,"status":"login","dowell_time":dowell_time,"timezone":zone,"regional_time":final_ltime,"server_time":serverclock,"userIP":ipuser,"userOS":osver,"userDevice":device,"userBrowser":brow,"language":language,"userID":user_id,"login_eventID":event_id,"client_admin_id":client_admin_id,"payment_status":payment_status,"user_country":user_country,"newsletter_subscription":newsletter,"Privacy_policy":privacy_policy,"Safety,Security_policy":other_policy}
             info1=json.dumps(info)
             infoo=str(info1)
             custom_session=CustomSession.objects.create(sessionID=session,info=infoo,document="",status="login")
 
-            if org1!="None":
-                # org_resp1=json.loads(org_resp)
-                # main={"name":username,"member_code":org_resp1["u_code"],"member_spec":org_resp1["spec"],"member_uni_code":org_resp1["uni_code"],"member_details":org_resp1["detail"],"status":"used"}
+            # if response["data"]["Username"]=="uxliveadmin":
+            #     return redirect(f'https://100082.pythonanywhere.com?session_id={session}')
+
+        if "org" in mainparams:
+            # org_resp1=json.loads(org_resp)
+            # main={"name":username,"member_code":org_resp1["u_code"],"member_spec":org_resp1["spec"],"member_uni_code":org_resp1["uni_code"],"member_details":org_resp1["detail"],"status":"used"}
+            if url=="https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/" and "portfolio" in mainparams and "product" in mainparams:
+                return redirect(f'https://100093.pythonanywhere.com/exportfolio?session_id={session}&{mainparams}')
+            else:
                 return redirect(f'https://100093.pythonanywhere.com/invitelink?session_id={session}&{mainparams}')
 
             if url=="None":
@@ -1015,6 +1116,17 @@ def forgot_password(request):
                     emailexist = None
                 if emailexist is not None:
                     models.GuestAccount.objects.filter(email=email_ajax).update(otp=otp_password,expiry=time,username=user)
+                    # url = "https://100085.pythonanywhere.com/api/signUp-otp-verification/"
+                    # payload = json.dumps({
+                    #     "toEmail":email_ajax,
+                    #     "toName":user,
+                    #     "topic":"RegisterOtp",
+                    #     "otp":otp_password
+                    #     })
+                    # headers = {
+                    #     'Content-Type': 'application/json'
+                    #     }
+                    # response1 = requests.request("POST", url, headers=headers, data=payload)
                     htmlgen = f'Dear {user}, <br> Please Enter below <strong>OTP</strong> to change password of dowell account <br><h2>Your OTP is <strong>{otp_password}</strong></h2><br>Note: This OTP is valid for the next 2 hours only.'
                     send_mail('Your OTP for changing password of Dowell account',otp_password,settings.EMAIL_HOST_USER,[email_ajax], fail_silently=False, html_message=htmlgen)
                     response = {'msg':''}
@@ -1022,6 +1134,17 @@ def forgot_password(request):
                 else:
                     insertdata=models.GuestAccount(username=user,email=email_ajax,otp=otp_password)
                     insertdata.save()
+                    # url = "https://100085.pythonanywhere.com/api/signUp-otp-verification/"
+                    # payload = json.dumps({
+                    #     "toEmail":email_ajax,
+                    #     "toName":user,
+                    #     "topic":"RegisterOtp",
+                    #     "otp":otp_password
+                    #     })
+                    # headers = {
+                    #     'Content-Type': 'application/json'
+                    #     }
+                    # response1 = requests.request("POST", url, headers=headers, data=payload)
                     htmlgen = f'Dear {user}, <br> Please Enter below <strong>OTP</strong> to change password of dowell account <br><h2>Your OTP is <strong>{otp_password}</strong></h2><br>Note: This OTP is valid for the next 2 hours only.'
                     send_mail('Your OTP for changing password of Dowell account',otp_password,settings.EMAIL_HOST_USER,[email_ajax], fail_silently=False, html_message=htmlgen)
                     response = {'msg':''}
@@ -1162,6 +1285,24 @@ def design_login(request):
         detail=request.GET.get('detail',None)
     except:
         pass
+    portfolio=request.GET.get('portfolio',None)
+    context["portfolio"]=portfolio
+    print(portfolio)
+    # member_type=request.GET.get('member_type',None)
+    # member_name=request.GET.get('member_name',None)
+    # if orgs and member_type=='public' and member_name :
+    #     field_public={"document_name":orgs}
+    #     ca=dowellconnection("login","bangalore","login","client_admin","client_admin","1159","ABCDE","fetch",field_public,"nil")
+    #     ca_resp=json.loads(ca)
+    #     if len(ca_resp["data"])>=1:
+    #         public_members=ca_resp["data"][0]["members"]["public_members"]["accept_members"]
+    #         for member in public_members:
+    #             if member_name == member["name"]:
+    #                 return HttpResponse("Public user found, I will create sessionID after this")
+    #         else:
+    #             return HttpResponse("Public user not found in org")
+    #     else:
+    #         return HttpResponse("Org not found")
     context["org"]=orgs
     context["type"]=type1
     urls=request.GET.get('next',None)
@@ -1199,8 +1340,11 @@ def design_login(request):
     if request.method == 'POST':
         username = request.POST['username']
         obj=Account.objects.filter(username=username).first()
-        obj.current_task="Data taken, Checking policy acceptance and  User registration..."
-        obj.save(update_fields=['current_task'])
+        try:
+            obj.current_task="Data taken, Checking policy acceptance and  User registration..."
+            obj.save(update_fields=['current_task'])
+        except:
+            pass
         random_session=request.POST.get('random_session',None)
         random_session_obj1=RandomSession.objects.filter(username=username).first()
         if random_session_obj1 is None:
@@ -1212,6 +1356,7 @@ def design_login(request):
             random_session_obj.save(update_fields=['username'])
         mainparams=request.POST.get('mainparams',None)
         org1=request.POST.get('org',None)
+        portfolio=request.POST.get('portfolio',None)
         type1=request.POST.get('type',None)
         url=request.POST.get('url',None)
         username = request.POST['username']
@@ -1229,6 +1374,25 @@ def design_login(request):
         ltime=request.POST["time"]
         ipuser=request.POST.get("ip","")
         mobconn=request.POST["conn"]
+        session=123
+        print(org1)
+        print("portfolio" in mainparams)
+        if "org" in mainparams:
+            # org_resp1=json.loads(org_resp)
+            # main={"name":username,"member_code":org_resp1["u_code"],"member_spec":org_resp1["spec"],"member_uni_code":org_resp1["uni_code"],"member_details":org_resp1["detail"],"status":"used"}
+            if url=="https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/" and "portfolio" in mainparams and "product" in mainparams:
+                print(f"{mainparams} and {url} 2")
+                return redirect(f'https://100093.pythonanywhere.com/exportfolio?session_id={session}&{mainparams}')
+            else:
+                return redirect(f'https://100093.pythonanywhere.com/invitelink?session_id={session}&{mainparams}')
+
+        if url=="None":
+            print("url")
+            return redirect(f'https://100093.pythonanywhere.com/home?session_id={session}')
+
+        else:
+            return HttpResponse(f"<script>window.location.replace('{url}?session_id={session}');</script>")
+            return redirect(f'{url}?session_id={session}')
 
         user = authenticate(request, username = username, password = password)
 
@@ -1271,8 +1435,11 @@ def design_login(request):
             id=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","find",field,"nil")
             response=json.loads(id)
             if response["data"] != None:
-                obj.current_task="User found, Inserting Session Details..."
-                obj.save(update_fields=['current_task'])
+                try:
+                    obj.current_task="User found, Inserting Session Details..."
+                    obj.save(update_fields=['current_task'])
+                except:
+                    pass
                 first_name=response["data"]['Firstname']
                 last_name=response["data"]['Lastname']
                 email=response["data"]['Email']
@@ -1301,20 +1468,29 @@ def design_login(request):
             field_session={'sessionID':session,'role':role_res,'username':username,'Email':email,'Phone':phone,'language':language,'city':city,'country':country,'org':org,'company_id':company,'project':project,'subproject':subproject,'dept':dept,'Memberof':member,'status':'login','dowell_time':dowell_time,'regional_time':final_ltime,'server_time':serverclock,'userIP':ipuser,'userOS':osver,'userdevice':device,'userbrowser':brow,'UserID':user_id,'login_eventID':event_id,"redirect_url":redirect_url,"client_admin_id":client_admin_id}
             dowellconnection("login","bangalore","login","session","session","1121","ABCDE","insert",field_session,"nil")
 
-            obj.current_task="Session inserted, Redirecting to client-admin..."
-            obj.save(update_fields=['current_task'])
+            try:
+                obj.current_task="Session inserted, Redirecting to client-admin..."
+                obj.save(update_fields=['current_task'])
+            except:
+                pass
 
             info={"role":role_res,"username":username,"email":email,"phone":phone,"city":city,"country":country,"status":"login","dowell_time":dowell_time,"regional_time":final_ltime,"server_time":serverclock,"userIP":ipuser,"userOS":osver,"userDevice":device,"userBrowser":brow,"language":language,"userID":user_id,"login_eventID":event_id,"client_admin_id":client_admin_id}
             info1=json.dumps(info)
             infoo=str(info1)
             custom_session=CustomSession.objects.create(sessionID=session,info=infoo,document="",status="login")
-
-            if org1!="None":
+            print("{mainparams} and {url}")
+            if "org" in mainparams:
+                print("org1")
                 # org_resp1=json.loads(org_resp)
                 # main={"name":username,"member_code":org_resp1["u_code"],"member_spec":org_resp1["spec"],"member_uni_code":org_resp1["uni_code"],"member_details":org_resp1["detail"],"status":"used"}
-                return redirect(f'https://100093.pythonanywhere.com/invitelink?session_id={session}&{mainparams}')
+                if url != "None" and "portfolio" in mainparams and "product" in mainparams:
+                    print("{mainparams} and {url}")
+                    return redirect(f'https://100093.pythonanywhere.com/exportfolio?session_id={session}&{mainparams}')
+                else:
+                    return redirect(f'https://100093.pythonanywhere.com/invitelink?session_id={session}&{mainparams}')
 
             if url=="None":
+                print("url")
                 return redirect(f'https://100093.pythonanywhere.com/home?session_id={session}')
 
             else:
@@ -1346,7 +1522,7 @@ def is_ajax(request):
 def Registertest(request):
     otp_user=generateOTP()
     context={}
-    orgs=None
+    orgs=request.GET.get('org',None)
     type1=None
     # For countrycode
     # URL='https://100074.pythonanywhere.com/countries/johnDoe123/haikalsb1234/100074/'
@@ -1368,35 +1544,68 @@ def Registertest(request):
                 emailexist = None
             if emailexist is not None:
                 models.GuestAccount.objects.filter(email=email_ajax).update(otp=otp_user,expiry=time,username=user)
-                htmlgen = f'Dear {user}, <br> Please Enter below <strong>OTP</strong> to create your dowell account <br><h2>Your OTP is <strong>{otp_user}</strong></h2><br>Note: This OTP is valid for the next 2 hours only.'
-                send_mail('Your OTP for creating your Dowell account',otp_user,settings.EMAIL_HOST_USER,[email_ajax], fail_silently=False, html_message=htmlgen)
+
+
+                url = "https://100085.pythonanywhere.com/api/signUp-otp-verification/"
+                payload = json.dumps({
+                    "toEmail":email_ajax,
+                    "toName":user,
+                    "topic":"RegisterOtp",
+                    "otp":otp_user
+                    })
+                headers = {
+                    'Content-Type': 'application/json'
+                    }
+
+                response = requests.request("POST", url, headers=headers, data=payload)
+                # htmlgen = f'Dear {user}, <br> Please Enter below <strong>OTP</strong> to create your dowell account <br><h2>Your OTP is <strong>{otp_user}</strong></h2><br>Note: This OTP is valid for the next 2 hours only.'
+                # send_mail('Your OTP for creating your Dowell account',otp_user,settings.EMAIL_HOST_USER,[email_ajax], fail_silently=False, html_message=htmlgen)
                 response = {}
                 return JsonResponse(response)
             else:
                 insertdata=models.GuestAccount(username=user,email=email_ajax,otp=otp_user)
                 insertdata.save()
-                htmlgen = f'Dear {user}, <br> Please Enter below <strong>OTP</strong> to create account <br><h2>Your OTP is <strong>{otp_user}</strong></h2><br>Note: This OTP is valid for the next 2 hours only.'
-                send_mail('Your OTP for creating your Dowell account',otp_user,settings.EMAIL_HOST_USER,[email_ajax], fail_silently=False, html_message=htmlgen)
+                URL='https://100085.pythonanywhere.com/api/send-mail/'
+                data={"toEmail":email_ajax,"toName":user,"topic":"RegisterOtp","otp":otp_user}
+                r=requests.post(url=URL,data=data)
+                # htmlgen = f'Dear {user}, <br> Please Enter below <strong>OTP</strong> to create account <br><h2>Your OTP is <strong>{otp_user}</strong></h2><br>Note: This OTP is valid for the next 2 hours only.'
+                # send_mail('Your OTP for creating your Dowell account',otp_user,settings.EMAIL_HOST_USER,[email_ajax], fail_silently=False, html_message=htmlgen)
                 response = {}
                 return JsonResponse(response)
         else:
+            otp_sms=generateOTP()
             # otp=request.POST.get("otp_phone",None)
             code=request.POST.get("code")
             phone=request.POST.get("phone")
             phonenum=code+phone
             # print(phonenum)
-            try:
-                rt=mobilnumber(phonenum)
-            except:
-                response={'msg':'Geo Blocked, You can proceed without verifying','error':'yes'}
-                return JsonResponse(response)
-            if rt=="pending":
-                response={'msg':"OTP successfully sent to your mobile number",'error':''}
-                return JsonResponse(response)
-                # context["msg"]="OTP successfully sent to your mobile number"
+            url = "https://100085.pythonanywhere.com/api/sms/"
+            payload = json.dumps({
+                "sender" : "Roshan",
+                "recipient" : phone,
+                "content" : otp_sms,
+                "created_by" : "Manish"
+                })
+
+            response = requests.request("POST", url, data=payload)
+            resp=json.loads(response)
+            print(resp)
+            if len(resp)>1:
+                return JsonResponse({'msg':'SMS sent successfully!!'})
             else:
-                response={'msg':"Error",'error':'yes'}
-                return JsonResponse(response)
+                return JsonResponse({'msg':'error'})
+            # try:
+            #     rt=mobilnumber(phonenum)
+            # except:
+            #     response={'msg':'Geo Blocked, You can proceed without verifying','error':'yes'}
+            #     return JsonResponse(response)
+            # if rt=="pending":
+            #     response={'msg':"OTP successfully sent to your mobile number",'error':''}
+            #     return JsonResponse(response)
+            #     # context["msg"]="OTP successfully sent to your mobile number"
+            # else:
+            #     response={'msg':"Error",'error':'yes'}
+            #     return JsonResponse(response)
             # response={'msg':"Error"}
             # return JsonResponse(response)
 
@@ -1433,7 +1642,6 @@ def Registertest(request):
         role1="guest"
         img=request.FILES.get("profile_image",None)
         name=""
-        print(otp_mobile)
         if otp_mobile !=""and otp_mobile is not None:
             phonenum=phone_code1+phone_number1
             try:
@@ -1449,10 +1657,11 @@ def Registertest(request):
         if password1 != password2:
             context["error"]="Passwords Not Matching.."
             return render(request, "login/test_register.html", context)
-        try:
-            valid = models.GuestAccount.objects.get(otp=otp,email=email)
-        except models.GuestAccount.DoesNotExist:
-            valid=None
+        # try:
+        #     valid = models.GuestAccount.objects.get(otp=otp,email=email)
+        # except models.GuestAccount.DoesNotExist:
+        #     valid=None
+        valid="ok"
         if valid is not None:
             try:
                 ro=Account.objects.filter(email=email)#.update(password = password,first_name = first,last_name = last,email = email,role = role,teamcode = ccode,phonecode=phonecode,phone = phone,profile_image=img)
@@ -1467,8 +1676,9 @@ def Registertest(request):
             return render(request, "login/test_register.html", context)
         if name is not None:
 
-            new_user=Account.objects.create(email=email,username=user,password=make_password(password1),first_name = first,last_name = last,phonecode=phonecode,phone = phone,profile_image=img)
-            profile_image=new_user.profile_image
+            # new_user=Account.objects.create(email=email,username=user,password=make_password(password1),first_name = first,last_name = last,phonecode=phonecode,phone = phone,profile_image=img)
+            # profile_image=new_user.profile_image
+            profile_image="user.png"
             json_data = open('dowell_login/static/newnaga2.json')
             data1 = json.load(json_data)
             json_data.close()
@@ -1479,8 +1689,8 @@ def Registertest(request):
             data1["organisations"][0]["org_name"]=user
             update_data2={"first_name":first,"last_name":last,"email":email}
             data1["members"]["team_members"]["accept_members"][0].update(update_data2)
-            client_admin=dowellconnection("login","bangalore","login","client_admin","client_admin","1159","ABCDE","insert",data1,"nil")
-            client_admin_res=json.loads(client_admin)
+            # client_admin=dowellconnection("login","bangalore","login","client_admin","client_admin","1159","ABCDE","insert",data1,"nil")
+            # client_admin_res=json.loads(client_admin)
 
             userfield={}
             # userresp=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","fetch",userfield,"nil")
@@ -1495,7 +1705,7 @@ def Registertest(request):
 
 
 
-            field={"Profile_Image":f'https://100014.pythonanywhere.com/media/{profile_image}',"Username":user,"Password":dowell_hash(password1),"Firstname":first,"Lastname":last,"Email":email,"phonecode":phonecode,"Phone":phone,"profile_id":profile_id,'org_id':[],"company_id":"",'project_id':[],'subproject_id':[],'dept_id':[],'Memberof':{},'client_admin_id':client_admin_res['inserted_id'],'Policy_status':policy_status}
+            # field={"Profile_Image":f'https://100014.pythonanywhere.com/media/{profile_image}',"Username":user,"Password":dowell_hash(password1),"Firstname":first,"Lastname":last,"Email":email,"phonecode":phonecode,"Phone":phone,"profile_id":profile_id,'org_id':[],"company_id":"",'project_id':[],'subproject_id':[],'dept_id':[],'Memberof':{},'client_admin_id':client_admin_res['inserted_id'],'Policy_status':policy_status}
             #field={"Username":user,"Password":password,"Firstname":first,"Lastname":last,"Email":email,"Role":role,"Team_Code":ccode,"phonecode":phonecode,"Phone":phone,"user_id":"userid"}
             # id=dowellconnection("login","bangalore","login","registration","registration","10004545","ABCDE","insert",field,"nil")
             htmlgen_final = f'Hi {first} {last}, <br> Welcome to UX Living Lab. Your new account details are,<br><h3><ul><li>Firstname: {first}</li><li>Lastname: {last}</li><li>Username: {user}</li><li>Phone Number: {phonecode} {phone}</li><li>Email: {email}</li></ul></h3><br>Login to UX Living Lab to use your workspace. Watch this video to learn more.<br>https://youtube.com/playlist?list=PLa-BPmUzAKKfVgomvrIsWd9ZGQFTiT0Xb<br><strong>Thank You</strong><br>UX Living Lab'
@@ -1510,7 +1720,7 @@ def Registertest(request):
             #   bcc=['customersupport@dowellresearch.sg']
             )
             email.content_subtype="html"
-            email.send()
+            # email.send()
             connection.close()
 
 
@@ -1524,12 +1734,16 @@ def Registertest(request):
             #     a.append(username)
             #     update_company={'members':a}
             #     dowellconnection("login","bangalore","login","company","company","1083","ABCDE","update",field_owner,update_company)
-            if org!="None":
+            print(org)
+            if org != "None":
+                print("org")
                 return redirect(f'https://100014.pythonanywhere.com/?{mainparams}')
-            if url is not None:
+            elif url:
+                print("url")
                 return redirect(f'/?redirect_url={url}')
             else:
-                return redirect("/")
+                print("done")
+                return render(request,'login/after_register.html',{'user':user})
         else:
 
             return HttpResponse("check")
