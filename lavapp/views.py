@@ -837,13 +837,15 @@ def LoginPage(request):
             # if response["data"]["Username"]=="uxliveadmin":
             #     return redirect(f'https://100082.pythonanywhere.com?session_id={session}')
 
-        if "org" in mainparams:
-            # org_resp1=json.loads(org_resp)
-            # main={"name":username,"member_code":org_resp1["u_code"],"member_spec":org_resp1["spec"],"member_uni_code":org_resp1["uni_code"],"member_details":org_resp1["detail"],"status":"used"}
-            if url=="https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/" and "portfolio" in mainparams and "product" in mainparams:
-                return redirect(f'https://100093.pythonanywhere.com/exportfolio?session_id={session}&{mainparams}')
-            else:
-                return redirect(f'https://100093.pythonanywhere.com/invitelink?session_id={session}&{mainparams}')
+            if "org" in mainparams:
+                # org_resp1=json.loads(org_resp)
+                # main={"name":username,"member_code":org_resp1["u_code"],"member_spec":org_resp1["spec"],"member_uni_code":org_resp1["uni_code"],"member_details":org_resp1["detail"],"status":"used"}
+                if url=="https://ll04-finance-dowell.github.io/100018-dowellWorkflowAi-testing/" and "portfolio" in mainparams and "product" in mainparams:
+                    return redirect(f'https://100093.pythonanywhere.com/exportfolio?session_id={session}&{mainparams}')
+                elif "commonlink" in mainparams:
+                    return redirect(f'https://100093.pythonanywhere.com/commonlink?session_id={session}&{mainparams}')
+                else:
+                    return redirect(f'https://100093.pythonanywhere.com/invitelink?session_id={session}&{mainparams}')
 
             if url=="None":
                 return redirect(f'https://100093.pythonanywhere.com/home?session_id={session}')
