@@ -4,6 +4,14 @@ import math
 from cryptography.fernet import Fernet
 import json
 from .dowellconnection import dowellconnection
+
+#For master_login
+import base64
+import os
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.backends import default_backend
+
 def host_check(host):
     try:
         urllib.request.urlopen(host)
@@ -87,3 +95,23 @@ def get_next_company_id(res_list):
         if 'company_id' in value.keys() :
             lis.append(value['company_id'])
     return(max([int(item) for item in lis])+1)
+
+#For master login
+def generate_key(password: str,saved_salt) -> bytes:
+    # Use a password-based key derivation function
+    password_bytes = password.encode()
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=b'\xc1\x12\xc4\xef\xd9\xbf\xac\xc5\xdc\x8e\x02BC\xa6f\xa4',
+        iterations=100000,
+        backend=default_backend()
+    )
+    key = base64.urlsafe_b64encode(kdf.derive(password_bytes))
+    return key
+
+def decrypt_message(encrypted_message: bytes, password: str, saved_salt : bytes) -> str:
+    key = generate_key(password,saved_salt)
+    fernet = Fernet(key)
+    return fernet.decrypt(encrypted_message).decode()
+

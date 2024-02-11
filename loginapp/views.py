@@ -13,7 +13,6 @@ import datetime
 from loginapp import dowell_func
 from loginapp.dowellconnection import dowellconnection
 
-
 def d_login(request):
     context={}
     if request.method == 'POST':

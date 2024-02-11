@@ -31,9 +31,9 @@ urlpatterns=[
     path('bookshow',views.BookShow,name="bookshow"),
     path('simplelogin',views.SimpleLoginPage,name="simplelogin"),
     path('createuser',views.CreateUser),
-    path('test',views.test_login),
+    # path('test',views.test_login),
     path('testlogin',views.testlogin),
-    path('linklogin',views.LoginwithLink),
+    path('linklogin',views.LinkLogin,name="linklogin"),
     path('linkbased',views.LinkBased,name="linkbased" ),
     # For new designs
     path('update_qrobj',views.update_qrobj,name="update_qrobj"),
@@ -41,6 +41,8 @@ urlpatterns=[
     path('redirect_url',views.redirect_url,name="redirect_url"),
     path('forgot_password',views.forgot_password,name="forgot_password"),
     path('forgot_username',views.forgot_username,name="forgot_username"),
+    path('change_password',views.change_password,name="change_password"),
+    path('allow_location',views.allow_location,name="allow_location"),
     path('sign-out',views.signout, name="sign-out"),
     path('design_login',views.design_login,name="design_login"),
     path('registertest',views.Registertest,name="registertest"),
@@ -48,4 +50,10 @@ urlpatterns=[
     path("legalpolicy",views.Policy,name="legalpolicy"),
     path("check_status",views.check_status,name="check_status"),
     path("mobileotp",views.mobileotp,name="mobileotp"),
+    path("live_status",views.live_status,name="live_status"),
+    path("live_qr_status",views.live_qr_status,name="live_qr_status"),
+    path("live_public_status",views.live_public_status,name="live_public_status"),
+    path("userdetails",views.userdetails,name="userdetails"),
+    path("add_public",views.add_public,name="add_public"),
+
 ]

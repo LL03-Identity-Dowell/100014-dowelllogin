@@ -121,14 +121,19 @@
             text.indexOf("(") + 1,
             text.lastIndexOf(") A")
         );
-        var str
-        r=mySubString.split(";")
-        if (r[2].length>4)
-        {
-          str=r[2]
-        }else{
-              str="could not get device name"
-        }
+        var str="could not get device name"
+        // r=mySubString.split(";")
+        // if(r){
+        //     if (r[2].length>4)
+        //     {
+        //       str=r[2]
+        //     }else{
+        //           str="could not get device name"
+        //     }
+        // }else{
+        //     str="could not get device name"
+        // }
+
         document.getElementById("dev").value = str;
         </script>
         <script>
@@ -146,7 +151,6 @@
               x.value = position.coords.latitude +
               " " + position.coords.longitude;
             }
-
             </script>
 <script type="application/javascript">
     function getIP(json) {

@@ -34,7 +34,7 @@ class Account(AbstractUser):
     current_task=models.CharField(max_length=200,null=True)
 
 class GuestAccount(models.Model):
-    username=models.CharField(max_length=20,unique=True)
+    username=models.CharField(max_length=20,unique=False)
     email=models.CharField(max_length=30,unique=True)
     is_activated=models.BooleanField(default=False)
     otp=models.IntegerField(null=True)
@@ -74,3 +74,49 @@ class QR_Creation(models.Model):
     password=models.CharField(max_length=2000)
     status=models.CharField(max_length=50, null=True,blank=True)
 
+class LiveStatus(models.Model):
+    sessionID=models.CharField(max_length=2000)
+    username=models.CharField(max_length=2000)
+    product=models.CharField(max_length=100)
+    status=models.CharField(max_length=50, null=True,blank=True)
+    date_created=models.CharField(max_length=1000)
+    date_updated=models.CharField(max_length=1000,null=True,blank=True)
+    updated=models.DateTimeField(null=True,blank=True)
+    created=models.DateTimeField(null=True,blank=True)
+
+class Live_QR_Status(models.Model):
+    qrid=models.CharField(max_length=2000)
+    product=models.CharField(max_length=100)
+    status=models.CharField(max_length=50, null=True,blank=True)
+    updated=models.DateTimeField(null=True,blank=True)
+    created=models.DateTimeField(null=True,blank=True)
+
+class Live_Public_Status(models.Model):
+    unique_key=models.CharField(max_length=2000)
+    product=models.CharField(max_length=100)
+    status=models.CharField(max_length=50, null=True,blank=True)
+    updated=models.DateTimeField(null=True,blank=True)
+    created=models.DateTimeField(null=True,blank=True)
+
+class Linkbased_RandomSession(models.Model):
+    sessionID=models.CharField(max_length=1000)
+    info=models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    status=models.CharField(max_length=50, null=True,blank=True,default="logout")
+
+class Location_check(models.Model):
+    username=models.CharField(max_length=1000,unique=True)
+    usual=models.TextField()
+    unusual=models.TextField(null=True,blank=True)
+    def __str__(self):
+        return self.username
+
+class products(models.Model):
+    product=models.CharField(max_length=1000,unique=True)
+    url=models.CharField(max_length=1000,blank=True)
+    ip=models.CharField(max_length=1000,blank=True)
+    status=models.CharField(max_length=100,default="active")
+
+class Face_Login(models.Model):
+    username=models.CharField(max_length=20,unique=True)
+    image=models.CharField(max_length=10000)

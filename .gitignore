@@ -1,3 +1,6 @@
 *.pyc
 __pycache__
 /media/
+myzipfile.zip
+*.zip
+db.sqlite3
