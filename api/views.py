@@ -11,7 +11,7 @@ from django.views.decorators.clickjacking import (
 from django.views.decorators.csrf import csrf_exempt
 import json
 from collections import namedtuple
-from loginapp.models import Account, CustomSession, LiveStatus, Live_QR_Status, Live_Public_Status, GuestAccount, mobile_sms, RandomSession, Linkbased_RandomSession, QR_Creation, Location_check, Face_Login
+from loginapp.models import Account, CustomSession, LiveStatus, Live_QR_Status, Live_Public_Status, GuestAccount, mobile_sms, RandomSession, Linkbased_RandomSession, QR_Creation, Location_check, Face_Login, products
 from loginapp.dowellconnection import dowellconnection
 #from voc_nps.models import Rating
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -338,6 +338,8 @@ class GuestView(APIView):
         return response
 class createUserView(APIView):
     def get(self,request):
+        print("Random user created")
+        print("Creating Random User: "+ str(request.META.get("HTTP_ORIGIN")))
         ruser=passgen.generate_random_password1(8)
         rpass=passgen.generate_random_password(10)
         user = Account.objects.create_user(username=ruser,email=f'{ruser}@lav.com',password=rpass,role="User",teamcode="15692532")
@@ -2586,15 +2588,12 @@ def user_data(request):
 @api_view(['POST'])
 def user_report(request):
 
-    # ok=request.META.get("HTTP_ORIGIN")
-    # return Response(ok)
-    # x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    # return Response({'ip': x_forwarded_for})
-    # if x_forwarded_for:
-    #     ip = x_forwarded_for.split(',')[0]
-    # else:
-    #     ip = request.META.get('REMOTE_ADDR')
-    # return Response({'ip': ip})
+    special_key=request.data.get("Pass")
+    if not special_key:
+        ok=request.META.get("HTTP_ORIGIN")
+        origin=products.objects.filter(url=ok)
+        if not origin.exists():
+            return Response({'msg':'error','info':'This website is not allowed to call the api. If from Postman, special key "Pass" is required..','url':ok})
 
     response={}
     session_id=request.data.get("session_id")
